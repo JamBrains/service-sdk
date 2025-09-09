@@ -7,9 +7,11 @@ char const* const jb_result_strings[] = {
 	"ERROR_STORAGE_KV_READ",
 	"ERROR_STORAGE_KV_WRITE",
 	"ERR_INSUFFICIENT_BALANCE",
+	"ERR_STORAGE_KV_DELETE",
+	"JB_ERR_NO_KEY"
 };
 
-char const* jb_result_fmt(jb_result_t result) {
+char const* jb_result_name(jb_result_t result) {
 	if (result >= CNT_OF(jb_result_strings)) {
 		return "RESULT_UNKNOWN";
 	}

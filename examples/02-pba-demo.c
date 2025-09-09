@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define NAME "JB Demo Service"
+#define NAME "JB Demo"
 
 void jb_hook_on_transfer(char **_out_ptr, uint64_t *_out_len /* TODO: transfers arg */) {
 
@@ -39,39 +39,44 @@ void jb_hook_accumulate(/* TODO: accumulate args */) {
     char entropy[32];
     jb_chain_entropy_32((uint8_t*)entropy);
     printf("Entropy: 0x");
-    for (int i = 0; i < 32; i++) {
+    for (int i = 0; i < 32; i++)
         printf("%02x", entropy[i]);
-    }
     puts("");
 
     // Write a value to storage
-    jb_storage_kv_writes("MyKey", "MyValue");
+    jb_result_t res = jb_storage_kv_writes("MyKey", "MyValue");
+    if (res != JB_OK) {
+        fprintf(stderr, "Could not write key: %s", jb_result_name(res));
+        return;
+    }
 
+    // Check if we can read the value we just wrote:
     uint8_t value[100];
     jb_result_t result = jb_storage_kv_reads("MyKey", value, 0, sizeof(value), NULL);
 
-    if (result == JB_OK) {
+    if (result == JB_OK)
         printf("Value: '%s'\n", value);
-    } else {
-        fprintf(stderr, "Key does not exist\n");
-    }
+    else
+        fprintf(stderr, "Key is not present\n");
 
+    // Try to write into the storage until our balance is insufficient:
     for (int i = 0; i < 1000; i++) {
+        // We generate a new key `MyKey#<i>` for each item:
         char key[100];
         memset(key, 0, sizeof(key));
         snprintf(key, sizeof(key), "MyKey#%d", i);
         jb_result_t result = jb_storage_kv_writes(key, "MyValue");
 
         if (result != JB_OK) {
-            fprintf(stderr, "Failed to write to storage: %s\n", jb_result_fmt(result));
+            fprintf(stderr, "Writing to the storage failed: %s\n", jb_result_name(result));
             break;
         }
 
-        // Print our balance and storage deposit
+        // Print our balance and required threshold balance
         uint64_t balance = jb_service_balance();
         uint64_t storage_deposit = jb_service_info().threshold_balance;
         float used_percent = ((float)storage_deposit / (float)balance) * 100.f;
-        printf("Balance: %lu, storage deposit: %lu, used: %.2f%%\n", balance, storage_deposit, used_percent);
+        printf("Items: %i, balance: %lu, storage deposit: %lu, used: %.2f%%\n", i + 1, balance, storage_deposit, used_percent);
     }
 
     printf("Finished. Remaining gas: %lu\n", jb_service_gas_remaining());

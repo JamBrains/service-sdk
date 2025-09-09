@@ -71,6 +71,8 @@ typedef enum {
 	JB_ERROR_STORAGE_KV_READ = 1,
 	JB_ERROR_STORAGE_KV_WRITE = 2,
 	JB_ERR_INSUFFICIENT_BALANCE = 3,
+	JB_ERR_STORAGE_KV_DELETE = 4,
+	JB_ERR_NO_KEY = 5,
 } jb_result_t;
 
-char const* jb_result_fmt(jb_result_t result);
+char const* jb_result_name(jb_result_t result);

@@ -4,12 +4,11 @@ set dotenv-path := "../.env"
 export CC_FLAGS := "-Wl,--error-limit=0 -flto -O0 -std=gnu23 -I/opt/sdk"
 export POLKATOOL_FLAGS := "--min-stack-size 131072 --dispatch-table '_jb_hook_accumulate,_jb_hook_accumulate,_jb_hook_accumulate,_jb_hook_accumulate'"
 
-# Define default recipe # disable service
 default: build
 
 build: output
-	just compile output/01-hello-world.elf 01-hello-world.c
-	just link output/01-hello-world.pvm output/01-hello-world.elf
+	just compile output/02-pba-demo.elf 02-pba-demo.c
+	just link output/02-pba-demo.jam output/02-pba-demo.elf
 
 output:
 	mkdir -p output
@@ -23,14 +22,14 @@ compile out_file *in_files:
 	# Replace their relative path with an absolute path of /opt/sdk
 	FILES=$(echo $FILES | sed 's|../sdk/|/opt/sdk/|g')
 
-	$DOCKER run --rm -v/Users/vados/Documents/work/polkavm-examples/examples:/app -v/Users/vados/Documents/work/polkavm-examples/sdk:/opt/sdk service-builder polkavm-cc \
+	$DOCKER run --rm -v/Users/vados/Documents/work/polkavm-examples/examples:/app -v/Users/vados/Documents/work/polkavm-examples/sdk:/opt/sdk $IMAGE polkavm-cc \
 		{{CC_FLAGS}} \
 		{{in_files}} \
 		$FILES \
 		-o {{out_file}}
 
 link out_file *in_files:
-	@$DOCKER run --rm -v{{justfile_directory()}}:/app -v{{justfile_directory()}}/../sdk:/opt/sdk service-builder polkatool link \
+	@$DOCKER run --rm -v{{justfile_directory()}}:/app -v{{justfile_directory()}}/../sdk:/opt/sdk $IMAGE polkatool link \
 		{{POLKATOOL_FLAGS}} \
 		{{in_files}} \
 		-o {{out_file}}

@@ -39,3 +39,6 @@ jb_result_t jb_storage_kv_read_of(uint64_t service_id, uint8_t const* const key_
 jb_result_t jb_storage_kv_write(uint8_t const* const key_ptr, uint64_t key_len, uint8_t const* const value_ptr, uint64_t value_len, uint64_t* out_old_value_len);
 
 jb_result_t jb_storage_kv_writes(char const* const key_ptr, char const* const value_ptr);
+
+jb_result_t jb_storage_kv_delete_existings(char const* const key_ptr);
+jb_result_t jb_storage_kv_deletes(char const* const key_ptr);

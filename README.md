@@ -1,58 +1,58 @@
-# WIP
+# PBA Demo
 
-Currently under construction to finish our first GP 0.6.7 service 🎉
+## Building the Service
 
-# PolkaVM Examples
+All examples use the [Dockerfile](Dockerfile) (Apple Silicone only) to get a clang-20 compiler with correct RISC support. There is a standalone version of the PolkaVM compiler available [here](https://github.com/JamBrains/polkaports), but to requires modifying the `compile` step of the [Justfile](examples/Justfile) to use it.
 
-How to run different languages in PolkaVM. All examples use the [Dockerfile](Dockerfile) to get a clang-20 compiler
-with correct RISC support.
-
-The project uses [`just`](https://github.com/casey/just) to run commands. Try it with:
+The project uses [`just`](https://github.com/casey/just) to run commands. Install it with:
 
 ```bash
 cargo install just
-just docker # or podman
+# Tell the script whether you use docker or podman
+just podman # or docker
+```
+
+You can now compile the PBA demo in the `examples` folder by running the `just` command:
+```bash
+cd examples
 just
 ```
 
-# Universal PVM Executor
+You should see the following output:
 
-The `pvme` folder contains a small CLI that can be used to run PVM programs and inject mocked host calls.  
-Its functionality is currently limited to `u32` types for arguments and return.
-
-For example, call the `entry` function with arguments 42 and 69 and provide a host function that returns 100:
-
+```pre
+mkdir -p output
+just compile output/02-pba-demo.elf 02-pba-demo.c
+just link output/02-pba-demo.pvm output/02-pba-demo.elf
 ```
-cd pvme
-cargo r -- call ../test.pvm entry 42 69 --host-functions "get_third_number:100"
+
+There is also a `watch` command that will re-build when you change the example code: `just watch`.
+
+This will result in a **`02-pba-demo.jam`** file in the `output` folder. This is the final service blob according to the Gray Paper.
+
+### Non-Apple Silicon
+
+You can build the Docker image also on Debian or other systems with `podman build -t service-builder .` (or `docker build -t service-builder .`) and then change the expected image name in the `.env` file to `service-builder`.
+
+## Run the Service
+
+You need checkout branch `oty-pvm-pba-demo` and run the test tagged with `only` in the file `packages/gm-core/test/jam/pvm/blob_test.exs`. Concretely:
+
+```bash
+cd graymatter
+git checkout oty-pvm-pba-demo
+cd packages/gm-core
+GM_SERVICE_LOG=5 GM_LOG=info mix test test/jam/pvm/blob_test.exs --only only
 ```
-# Languages
 
-- `C`: [lang-c](./lang-c/main.c)
-- `C++`: [lang-cpp](./lang-cpp/main.cpp)
+The output should print something like this:
 
-# Troubleshooting
+```pre
+...
+11:13:52.805 [info] LOG(JB Demo): Items: 118, balance: 10000, storage deposit: 9858, used: 98.58%
+11:13:52.809 [info] LOG(JB Demo): Items: 119, balance: 10000, storage deposit: 9940, used: 99.40%
+11:13:52.812 [info] LOG(JB Demo): Items: 120, balance: 10000, storage deposit: 10022, used: 100.22%
+11:13:52.814 [error] LOG(JB Demo): Writing to the storage failed: ERR_INSUFFICIENT_BALANCE
+```
 
-### `cannot find entry symbol _start; not setting start address`
-
-Linker not happy because it expects a function with name `_start` to be present. This function is normally provided
-by some glue code for your program automatically, but it is not generated since we use special compiler flags.
-
-Three ways to fix:
-- Ignore it
-- Add a mocked `_start` function that traps
-- Add custom linker script to not get the warning
-
-### `found an export without a relocation for a pointer to the metadata at <section #3+1>`
-
-Your linker flags are minced. Ensure that they contain `-Wl,--emit-relocs`.
-
-### `failed to link "test.elf": truncated ecalli instruction`
-
-This was a bug in polkatool, update it with `cargo install --git https://github.com/koute/polkavm polkatool`.
-
-
-## TODO Oliver
-- Check make version >= 4 `GNU Make >= 4.0 is required. Your Make version is 3.81.  Stop.`
-- Check versions https://github.com/paritytech/polkaports//blob/fa0c2d1c2143b961eff1aa2c47cb9f1295863380/.github/workflows/ci.yml#L40-L49
-- Check sed, maybe need gnu sed https://stackoverflow.com/questions/4247068/sed-command-with-i-option-failing-on-mac-but-works-on-linux
+It demonstrates the threshold balance that a service needs to keep in order to write storage. You can play around with the code in `examples/02-pba-demo.c` to see how it works.
