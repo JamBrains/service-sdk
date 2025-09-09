@@ -32,7 +32,7 @@ This will result in a **`02-pba-demo.jam`** file in the `output` folder. This is
 
 ### Non-Apple Silicon
 
-You can build the Docker image also on Debian or other systems with `podman build -t service-builder .` (or `docker build -t service-builder .`) and then change the expected image name in the `.env` file to `service-builder`.
+You can build the Docker image also on Debian or other systems with `podman build -t service-builder .` (or `docker build -t service-builder .`) and then change the expected image name in `examples/Justfile` to `service-builder`.
 
 If you do not want to use Docker at all, you can also build the dependencies manually like described in [here](https://github.com/JamBrains/polkaports). You then still have to modify the `compile` step of the [Justfile](examples/Justfile) to use it directly.
 
