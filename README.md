@@ -26,7 +26,7 @@ just compile output/02-pba-demo.elf 02-pba-demo.c
 just link output/02-pba-demo.jam output/02-pba-demo.elf
 ```
 
-There is also a `watch` command that will re-build when you change the example code: `just watch`.
+There is also a `watch` command that will re-build when you change the example code: `just examples watch`.
 
 This will result in a **`02-pba-demo.jam`** file in the `output` folder. This is the final service blob according to the Gray Paper.
 

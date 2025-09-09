@@ -38,6 +38,3 @@ clean:
 
 watch:
 	ls . | entr -c "just"
-
-service:
-	just service/
