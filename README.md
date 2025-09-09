@@ -2,14 +2,15 @@
 
 ## Building the Service
 
-All examples use the [Dockerfile](Dockerfile) (Apple Silicone only) to get a clang-20 compiler with correct RISC support. There is a standalone version of the PolkaVM compiler available [here](https://github.com/JamBrains/polkaports), but to requires modifying the `compile` step of the [Justfile](examples/Justfile) to use it.
+The easiest way to build the service is to use our provided Docker image (Apple silicon only). See the next section in case that you cannot use it.
 
 The project uses [`just`](https://github.com/casey/just) to run commands. Install it with:
 
 ```bash
 cargo install just
-# Tell the script whether you use docker or podman
-just podman # or docker
+
+# Tell the script whether you prefer docker or podman
+just docker # or podman
 ```
 
 You can now compile the PBA demo in the `examples` folder by running the `just` command:
@@ -34,6 +35,8 @@ This will result in a **`02-pba-demo.jam`** file in the `output` folder. This is
 
 You can build the Docker image also on Debian or other systems with `podman build -t service-builder .` (or `docker build -t service-builder .`) and then change the expected image name in the `.env` file to `service-builder`.
 
+If you do not want to use Docker at all, you can also build the dependencies manually like described in [here](https://github.com/JamBrains/polkaports). You then still have to modify the `compile` step of the [Justfile](examples/Justfile) to use it directly.
+
 ## Run the Service
 
 You need checkout branch `oty-pvm-pba-demo` and run the test tagged with `only` in the file `packages/gm-core/test/jam/pvm/blob_test.exs`. Concretely:
@@ -56,3 +59,6 @@ The output should print something like this:
 ```
 
 It demonstrates the threshold balance that a service needs to keep in order to write storage. You can play around with the code in `examples/02-pba-demo.c` to see how it works.
+
+If you want a watch-command template for [`entr`](https://formulae.brew.sh/formula/entr) (replace the path with your own):  
+`echo "/Users/vados/Documents/work/polkavm-examples/examples/output/02-pba-demo.pvm" | entr -cs 'GM_SERVICE_LOG=5 GM_LOG=info mix test test/jam/pvm/blob_test.exs --only only'`
