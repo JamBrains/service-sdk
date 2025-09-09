@@ -13,10 +13,9 @@ cargo install just
 just docker # or podman
 ```
 
-You can now compile the PBA demo in the `examples` folder by running the `just` command:
+You can now compile the PBA demo in the `examples` folder with the `just examples` command:
 ```bash
-cd examples
-just
+just examples
 ```
 
 You should see the following output:
@@ -24,7 +23,7 @@ You should see the following output:
 ```pre
 mkdir -p output
 just compile output/02-pba-demo.elf 02-pba-demo.c
-just link output/02-pba-demo.pvm output/02-pba-demo.elf
+just link output/02-pba-demo.jam output/02-pba-demo.elf
 ```
 
 There is also a `watch` command that will re-build when you change the example code: `just watch`.
