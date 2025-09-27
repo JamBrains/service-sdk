@@ -5,11 +5,6 @@
 #include "jb_log.h"
 #include "host.h"
 
-/// @brief Initialize the service.
-/// @param name The name of your service. Should be ASCII and brief.
-/// @note MUST be called when the service is first deployed and MAY be called at any time.
-void jb_init(char const* const name);
-
 /// @brief Get the chain parameters.
 jb_chain_params_t jb_chain_params();
 
@@ -38,4 +33,4 @@ void jb_hook_is_authorized();
 void jb_hook_refine();
 
 /// @brief You have to implement this for your service to be able to be accumulated
-void jb_hook_accumulate();
+void jb_hook_accumulate(jb_accumulate_arguments_t*);

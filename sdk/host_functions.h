@@ -7,6 +7,7 @@ uint64_t jb_host_gas();
 
 #define JB_FETCH_DISCRIMINATOR_CHAIN_PARAMS 0
 #define JB_FETCH_DISCRIMINATOR_CHAIN_ENTROPY32 1
+#define JB_FETCH_DISCRIMINATOR_OPERANDS 14
 
 /// W_10 register discriminator for the  fetch host call.
 typedef uint64_t jb_fetch_discriminator_t;

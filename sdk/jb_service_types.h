@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include "jb_result.h"
 
 // Note that we dont give a shit about the byte order since PVM has little endian.
 // We "decode" this just by casting.
@@ -64,15 +65,13 @@ uint64_t jb_chain_params_fmt(jb_chain_params_t* params, char* buffer, uint64_t b
 
 #define JB_SERVICE_ID_SELF (uint64_t)0xffffffffffffffff
 
-/// @brief The result of a read host call.
-/// @details Indicates failure by returning `JB_READ_RESULT_ERROR` and the out length otherwise.
-typedef enum {
-	JB_OK = 0,
-	JB_ERROR_STORAGE_KV_READ = 1,
-	JB_ERROR_STORAGE_KV_WRITE = 2,
-	JB_ERR_INSUFFICIENT_BALANCE = 3,
-	JB_ERR_STORAGE_KV_DELETE = 4,
-	JB_ERR_NO_KEY = 5,
-} jb_result_t;
+typedef struct {
+	uint32_t timeslot;
+	uint32_t service_id;
+	uint64_t num_operands;
+} jb_accumulate_arguments_t;
 
-char const* jb_result_name(jb_result_t result);
+/// Decode function for `jb_accumulate_arguments_t`. Final; does not chain.
+jb_result_t jb_accumulate_arguments_decode(uint8_t* in_buff, uint64_t in_remaining, jb_accumulate_arguments_t* out_value);
+
+uint64_t jb_accumulate_arguments_fmt(jb_accumulate_arguments_t* args, char* buffer, uint64_t buffer_len);
