@@ -1,5 +1,5 @@
 # Set CC flags
-export CC_FLAGS := "-Wl,--error-limit=0 -flto -O0 -std=gnu23 -I../sdk"
+export CC_FLAGS := "-Wl,--error-limit=0 -flto -O0 -std=gnu23 -I/opt/sdk"
 export POLKATOOL_FLAGS := "--min-stack-size 131072 --dispatch-table '_jb_entry_accumulate,_jb_entry_accumulate,_jb_entry_accumulate,_jb_entry_accumulate'"
 export IMAGE := "ggwpez/service-builder"
 
@@ -19,16 +19,16 @@ compile out_file *in_files:
 	# List all files in /opt/sdk
 	FILES=$(ls ../sdk/*.c)
 	# Replace their relative path with an absolute path of /opt/sdk
-	#FILES=$(echo $FILES | sed 's|../sdk/|/opt/sdk/|g')
+	FILES=$(echo $FILES | sed 's|../sdk/|/opt/sdk/|g')
 
-	polkavm-cc \
+	$DOCKER run --rm -v{{justfile_directory()}}:/app -v{{justfile_directory()}}/../sdk:/opt/sdk {{IMAGE}} polkavm-cc \
 		{{CC_FLAGS}} \
 		{{in_files}} \
 		$FILES \
 		-o {{out_file}}
 
 link out_file *in_files:
-	@polkatool link \
+	@$DOCKER run --rm -v{{justfile_directory()}}:/app -v{{justfile_directory()}}/../sdk:/opt/sdk {{IMAGE}} polkatool link \
 		{{POLKATOOL_FLAGS}} \
 		{{in_files}} \
 		-o {{out_file}}
