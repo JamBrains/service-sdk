@@ -28,6 +28,8 @@ void jb_hook_accumulate(jb_accumulate_arguments_t* args) {
     jb_accumulate_arguments_fmt(args, buffer, sizeof(buffer));
     printf("Accumulate arguments: '%s'\n", buffer);
 
+    jb_service_accumulate_operands();
+
     return;
 
     // Print all chain params. Will produce something like this:

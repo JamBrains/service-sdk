@@ -15,6 +15,7 @@ typedef enum {
 	JB_ERR_UNDECODABLE = 9,
 	JB_ERR_TOO_BIG = 10,
 	JB_ERR_TRAILING_DATA = 11,
+	JB_ERR_MALLOC = 12,
 } jb_result_t;
 
 char const* jb_result_name(jb_result_t result);

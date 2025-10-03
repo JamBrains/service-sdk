@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <sys/auxv.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 jb_chain_params_t jb_chain_params() {
 	jb_chain_params_t params;
@@ -23,6 +24,22 @@ uint64_t jb_service_gas_remaining() {
 
 uint64_t jb_service_balance() {
 	return jb_service_info().balance;
+}
+
+void jb_service_accumulate_operands() {
+	// TODO optimize by optimistically alloc 1KB on the stack, maybe it fits and if not then we still get the first part
+	uint64_t encoded_len = jb_host_fetch(NULL, 0, 0, JB_FETCH_DISCRIMINATOR_OPERANDS, 0, 0);
+	if (encoded_len == 0)
+		return;
+
+	uint8_t* buff = (uint8_t*)malloc(encoded_len);
+	if (!buff)
+		return; // JB_ERR_MALLOC;
+
+	// TODO handle err
+	jb_host_fetch(NULL, 0, encoded_len, JB_FETCH_DISCRIMINATOR_OPERANDS, 0, 0);
+
+	free(buff);
 }
 
 jb_service_info_t jb_service_info_of(uint64_t service_id) {

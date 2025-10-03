@@ -17,6 +17,8 @@ uint64_t jb_service_gas_remaining();
 /// @brief Get the balance of the current service.
 uint64_t jb_service_balance();
 
+void jb_service_accumulate_operands();
+
 /// @brief Get the info of the current service.
 jb_service_info_t jb_service_info();
 
