@@ -6,8 +6,8 @@ export IMAGE := "ggwpez/service-builder"
 default: build
 
 build: output
-	just compile output/02-pba-demo.elf 02-pba-demo.c
-	just link output/02-pba-demo.jam output/02-pba-demo.elf
+	just compile output/04-bless-demo.elf 04-bless-demo.c
+	just link output/04-bless-demo.jam output/04-bless-demo.elf
 
 output:
 	mkdir -p output

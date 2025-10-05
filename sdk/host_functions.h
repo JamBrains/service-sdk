@@ -19,4 +19,6 @@ uint64_t jb_host_write(uint8_t const* const key_ptr, uint64_t key_len, uint8_t c
 
 void jb_host_info(uint64_t service_id, jb_service_info_t* out_ptr);
 
+void jb_host_bless(uint64_t manager, uint8_t const* const assigners_ptr, uint64_t delegator, uint64_t registrar, uint8_t const* const extra_ptr, uint64_t extra_count);
+
 void jb_host_log(uint64_t level, uint8_t const* const target, uint64_t target_len, uint8_t const* const msg, uint64_t msg_len);
