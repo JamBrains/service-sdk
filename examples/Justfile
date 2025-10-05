@@ -1,13 +1,20 @@
+set dotenv-load := true
+set dotenv-path := "../.env"
+
 # Set CC flags
 export CC_FLAGS := "-Wl,--error-limit=0 -flto -O0 -std=gnu23 -I/opt/sdk"
 export POLKATOOL_FLAGS := "--min-stack-size 131072 --dispatch-table '_jb_hook_accumulate,_jb_hook_accumulate,_jb_hook_accumulate,_jb_hook_accumulate'"
 export IMAGE := "ggwpez/service-builder"
 
-default: build
+default:
+	@echo "Usage: just build <name>"
+	@echo "Available examples:"
+	@ls *.c | sed 's/\.c$//'
 
-build: output
-	just compile output/02-pba-demo.elf 02-pba-demo.c
-	just link output/02-pba-demo.jam output/02-pba-demo.elf
+# Build a specific example by name (without .c extension)
+build name: output
+	just compile output/{{name}}.elf {{name}}.c
+	just link output/{{name}}.jam output/{{name}}.elf
 
 output:
 	mkdir -p output
