@@ -21,16 +21,8 @@ void jb_hook_refine(/* TODO: refine args */) {
 
 }
 
-void jb_hook_accumulate(jb_accumulate_arguments_t* args) {
+void jb_hook_accumulate(jb_accumulate_arguments_t* _args) {
     printf("Balance: %lu, gas remaining: %lu\n", jb_service_balance(), jb_service_gas_remaining());
-
-    char buffer[1000];
-    jb_accumulate_arguments_fmt(args, buffer, sizeof(buffer));
-    printf("Accumulate arguments: '%s'\n", buffer);
-
-    jb_service_accumulate_operands();
-
-    return;
 
     // Print all chain params. Will produce something like this:
     //  item_deposit: 10,
@@ -38,6 +30,7 @@ void jb_hook_accumulate(jb_accumulate_arguments_t* args) {
     //  base_deposit: 100,
     //  core_count: 341,
     //  ...
+    char buffer[1000];
     jb_chain_params_t params = jb_chain_params();
     jb_chain_params_fmt(&params, buffer, sizeof(buffer));
     printf("Chain Params: '%s'\n", buffer);
