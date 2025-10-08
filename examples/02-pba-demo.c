@@ -7,21 +7,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#define NAME "JB Demo"
-
-void jb_hook_on_transfer(char **_out_ptr, uint64_t *_out_len /* TODO: transfers arg */) {
-
-}
-
-void jb_hook_is_authorized(/* TODO: authorization args */) {
-
-}
-
-void jb_hook_refine(/* TODO: refine args */) {
-
-}
-
 void jb_hook_accumulate(jb_accumulate_arguments_t* _args) {
+    printf("Accumulate called with timeslot: %u, service_id: %u, num_operands: %lu\n", _args->timeslot, _args->service_id, _args->num_operands);
     printf("Balance: %lu, gas remaining: %lu\n", jb_service_balance(), jb_service_gas_remaining());
 
     // Print all chain params. Will produce something like this:
@@ -33,7 +20,7 @@ void jb_hook_accumulate(jb_accumulate_arguments_t* _args) {
     char buffer[1000];
     jb_chain_params_t params = jb_chain_params();
     jb_chain_params_fmt(&params, buffer, sizeof(buffer));
-    printf("Chain Params: '%s'\n", buffer);
+    printf("Chain Params: %s\n", buffer);
 
     // Print chain entropy
     char entropy[32];
@@ -55,7 +42,7 @@ void jb_hook_accumulate(jb_accumulate_arguments_t* _args) {
     jb_result_t result = jb_storage_kv_reads("MyKey", value, 0, sizeof(value), NULL);
 
     if (result == JB_OK)
-        printf("Value: '%s'\n", value);
+        printf("Value: %s\n", value);
     else
         fprintf(stderr, "Key is not present\n");
 
@@ -68,6 +55,7 @@ void jb_hook_accumulate(jb_accumulate_arguments_t* _args) {
         jb_result_t result = jb_storage_kv_writes(key, "MyValue");
 
         if (result != JB_OK) {
+            // We may not have enough gas remaining to print it, but still try:
             fprintf(stderr, "Writing to the storage failed: %s\n", jb_result_name(result));
             break;
         }
@@ -81,3 +69,7 @@ void jb_hook_accumulate(jb_accumulate_arguments_t* _args) {
 
     printf("Finished. Remaining gas: %lu\n", jb_service_gas_remaining());
 }
+
+
+void jb_hook_is_authorized() {}
+void jb_hook_refine() {}

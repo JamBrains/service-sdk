@@ -5,17 +5,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#define NAME "JB Demo Service"
-
-void jb_hook_on_transfer(char **_out_ptr, uint64_t *_out_len /* TODO: transfers arg */) {
+void jb_hook_is_authorized() {
 
 }
 
-void jb_hook_is_authorized(/* TODO: authorization args */) {
-
-}
-
-void jb_hook_refine(/* TODO: refine args */) {
+void jb_hook_refine() {
 
 }
 
@@ -86,8 +80,6 @@ void jb_hook_accumulate(jb_accumulate_arguments_t*) {
     bytes_in_storage -= 3;
     assert_threshold(100 + 10 * items_in_storage + bytes_in_storage);
     assert_bytes_and_items_in_storage(bytes_in_storage, items_in_storage);
-
-    return;
 
     for (int i = 0; i < 1000; i++) {
         char key[100];
