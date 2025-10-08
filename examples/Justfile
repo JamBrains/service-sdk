@@ -7,17 +7,30 @@ export POLKATOOL_FLAGS := "--min-stack-size 131072 --dispatch-table '_jb_entry_a
 export IMAGE := "ggwpez/service-builder"
 
 default:
-	@echo "Usage: just build <name>"
+	@echo "Build an example with 'just build [<name>]' or all examples with 'just build'"
 	@echo "Available examples:"
-	@ls *.c | sed 's/\.c$//'
+	@ls *.c | perl -ne 's/\.c$//; print'
 
 # Build a specific example by name (without .c extension)
-build name: output
-	just compile output/{{name}}.elf {{name}}.c
-	just link output/{{name}}.jam output/{{name}}.elf
+build *name: output
+	#!/usr/bin/env bash
+	set -e
+
+	# If name is empty, then we build all examples
+	if [ -z "{{name}}" ]; then
+		for n in *.c; do
+			name=$(basename $n .c)
+			just build $name
+		done
+	else
+		for n in {{name}}; do
+			just compile output/${n}.elf ${n}.c
+			just link output/${n}.jam output/${n}.elf
+		done
+	fi
 
 output:
-	mkdir -p output
+	@mkdir -p output
 
 compile out_file *in_files:
 	#!/usr/bin/env bash
@@ -39,6 +52,7 @@ link out_file *in_files:
 		{{POLKATOOL_FLAGS}} \
 		{{in_files}} \
 		-o {{out_file}}
+	@echo "Linked {{out_file}}"
 
 clean:
 	rm -rf output/
