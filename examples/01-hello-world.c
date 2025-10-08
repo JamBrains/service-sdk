@@ -19,8 +19,6 @@ void jb_hook_refine(/* TODO: refine args */) {
 
 }
 
-void jb_hook_accumulate(/* TODO: accumulate args */) {
-    jb_init(NAME);
-
+void jb_hook_accumulate(jb_accumulate_arguments_t*) {
     puts("Hello from Accumulate");
 }

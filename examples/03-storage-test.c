@@ -55,9 +55,7 @@ void assert_ok(jb_result_t result) {
     }
 }
 
-void jb_hook_accumulate(/* TODO: accumulate args */) {
-    jb_init(NAME);
-
+void jb_hook_accumulate(jb_accumulate_arguments_t*) {
     printf("Balance: %lu, gas remaining: %lu\n", jb_service_balance(), jb_service_gas_remaining());
     uint64_t bytes_in_storage = 0; // a_o
     uint64_t items_in_storage = 0; // n_o

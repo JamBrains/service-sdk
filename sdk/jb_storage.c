@@ -52,7 +52,7 @@ jb_result_t jb_storage_kv_read_of(uint64_t service_id, uint8_t const* const key_
 	uint64_t result = jb_host_read(service_id, key_ptr, key_len, out_ptr, value_offset, value_max_len);
 	if (result == HOST_NONE) {
 		// Key does not exist.
-		return JB_ERROR_STORAGE_KV_READ;
+		return JB_ERR_STORAGE_KV_READ;
 	}
 	
 	if (out_value_len)

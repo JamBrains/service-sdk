@@ -19,9 +19,7 @@ void jb_hook_refine() {
     // Not implemented for this demo
 }
 
-void jb_hook_accumulate() {
-    jb_init(NAME);
-
+void jb_hook_accumulate(jb_accumulate_arguments_t*) {
     printf("=== Bless Host Function Demo ===\n");
     printf("Balance: %lu, gas remaining: %lu\n", jb_service_balance(), jb_service_gas_remaining());
 
