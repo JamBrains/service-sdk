@@ -1,26 +1,11 @@
 #include "jb_service.h"
-#include "host_functions.h"
 
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 
-#define NAME "Bless Demo"
-
-void jb_hook_on_transfer(char **_out_ptr, uint64_t *_out_len) {
-    // Not implemented for this demo
-}
-
-void jb_hook_is_authorized() {
-    // Not implemented for this demo
-}
-
-void jb_hook_refine() {
-    // Not implemented for this demo
-}
-
 void jb_hook_accumulate(jb_accumulate_arguments_t*) {
-    printf("=== Bless Host Function Demo ===\n");
+    puts("=== Bless Host Function Demo ===");
     printf("Balance: %lu, gas remaining: %lu\n", jb_service_balance(), jb_service_gas_remaining());
 
     // Example bless operation with sample parameters
@@ -46,7 +31,7 @@ void jb_hook_accumulate(jb_accumulate_arguments_t*) {
     
     uint64_t service_count = 3;
 
-    printf("Calling bless host function with:\n");
+    puts("Calling bless host function with:");
     printf("  manager: %lu\n", manager);
     printf("  delegator: %lu\n", delegator);
     printf("  registrar: %lu\n", registrar);
@@ -55,7 +40,7 @@ void jb_hook_accumulate(jb_accumulate_arguments_t*) {
         printf("0x%02x", assigners_data[i]);
         if (i < sizeof(assigners_data) - 1) printf(", ");
     }
-    printf("]\n");
+    puts("]");
     printf("  accumulate services (%lu entries):\n", service_count);
     for (int i = 0; i < service_count; i++) {
         printf("    service_id: %u, gas: %lu\n", services[i].service_id, services[i].gas);
@@ -64,6 +49,9 @@ void jb_hook_accumulate(jb_accumulate_arguments_t*) {
     // Call the bless host function
     jb_host_bless(manager, assigners_data, delegator, registrar, (uint8_t*)services, service_count);
 
-    printf("Bless operation completed successfully!\n");
+    puts("Bless operation completed successfully!");
     printf("Remaining gas: %lu\n", jb_service_gas_remaining());
 }
+
+void jb_hook_is_authorized() { /* Not needed for this demo */ }
+void jb_hook_refine() {/* Not needed for this demo */ }

@@ -15,15 +15,16 @@ just docker # or podman
 
 You can now compile the PBA demo in the `examples` folder with the `just examples` command:
 ```bash
-just examples
+just examples build
 ```
 
 You should see the following output:
 
 ```pre
-mkdir -p output
-just compile output/02-pba-demo.elf 02-pba-demo.c
-just link output/02-pba-demo.jam output/02-pba-demo.elf
+Linked output/01-hello-world.jam
+Linked output/02-pba-demo.jam
+Linked output/03-storage-test.jam
+Linked output/04-bless-demo.jam
 ```
 
 There is also a `watch` command that will re-build when you change the example code: `just examples watch`.

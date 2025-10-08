@@ -22,6 +22,7 @@ void jb_init(char const* const name) {
 
 void _jb_entry_on_transfer()
 {
+	POLKAVM_TRAP();
 }
 
 void _jb_entry_is_authorized() {
@@ -34,6 +35,7 @@ void _jb_entry_refine() {
 
 void _jb_entry_accumulate(void* arg_ptr, uint64_t arg_len) {
 	jb_init("JB Service");
+	
 	jb_accumulate_arguments_t args;
     jb_result_t res = jb_accumulate_arguments_decode((uint8_t*)arg_ptr, arg_len, &args);
     if (res != JB_OK) {
