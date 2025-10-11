@@ -33,6 +33,7 @@ jb_result_t jb_codec_decode_general_int(uint8_t** buff, uint64_t* remaining, uin
 		// big endian targets.
 		*out = *(uint64_t*)*buff;
 		*buff += 8;
+		*remaining -= 8;
 	}
 
 	// TODO use gnu89 range switch
@@ -41,17 +42,17 @@ jb_result_t jb_codec_decode_general_int(uint8_t** buff, uint64_t* remaining, uin
 		return JB_ERR_UNREACHABLE; // already checked
 	else if (x0 < 192)
 		l = 1, m = 128;
-   	else if (x0 < 224)
+ 	else if (x0 < 224)
 		l = 2, m = 192;
-    else if (x0 < 240)
+  else if (x0 < 240)
 		l = 3, m = 224;
-    else if (x0 < 248)
+  else if (x0 < 248)
 		l = 4, m = 240;
-    else if (x0 < 252)
+  else if (x0 < 252)
 		l = 5, m = 248;
-    else if (x0 < 254)
+  else if (x0 < 254)
 		l = 6, m = 252;
-    else if (x0 < 255)
+  else if (x0 < 255)
 		l = 7, m = 254;
 	else
 		return JB_ERR_UNDECODABLE;
@@ -61,8 +62,10 @@ jb_result_t jb_codec_decode_general_int(uint8_t** buff, uint64_t* remaining, uin
 
 	uint64_t v = 0;
 	for (uint64_t i = 0; i < l; i++) {
-		v += (uint64_t)*buff << (l - i);
+		uint64_t number = (uint64_t)**buff;
+		v += number << (8 * i);
 		*buff += 1;
+		*remaining -= 1;
 	}
 
 	uint64_t s = x0 - m;
