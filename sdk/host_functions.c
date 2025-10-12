@@ -3,6 +3,35 @@
 
 #include <string.h>
 
+char const* jb_host_result_name(uint64_t host_result) {
+	switch (host_result) {
+		case HOST_NONE:
+			return "None";
+		case HOST_WHAT:
+			return "What";
+		case HOST_OOB:
+			return "Out of bounds";
+		case HOST_WHO:
+			return "Who?";
+		case HOST_FULL:
+			return "Full";
+		case HOST_CORE:
+			return "Core";
+		case HOST_CASH:
+			return "Cash";
+		case HOST_LOW:
+			return "Low";
+		case HOST_HUH:
+			return "Huh";
+		case HOST_OK:
+			return "Ok";
+		default:
+			return "Unknown host return";
+	}
+}
+
+// === GENERAL ===
+
 uint64_t jb_host_gas() {
 	return jb_host_gas_untyped();
 }
@@ -28,10 +57,12 @@ void jb_host_log(uint64_t level, uint8_t const* const target, uint64_t target_le
 	jb_host_log_untyped(level, (uint64_t)target, target_len, (uint64_t)msg, msg_len);
 }
 
-void jb_host_bless(uint64_t manager, uint8_t const* const assigners_ptr, uint64_t delegator, uint64_t registrar, uint8_t const* const extra_ptr, uint64_t extra_count) {
-	jb_host_bless_untyped(manager, (uint64_t)assigners_ptr, delegator, registrar, (uint64_t)extra_ptr, extra_count);
+// === Accumulate ===
+
+uint64_t jb_host_bless(uint64_t manager, uint8_t const* const assigners_ptr, uint64_t delegator, uint64_t registrar, uint8_t const* const extra_ptr, uint64_t extra_count) {
+	return jb_host_bless_untyped(manager, (uint64_t)assigners_ptr, delegator, registrar, (uint64_t)extra_ptr, extra_count);
 }
 
-void jb_host_assign(uint64_t core_index, uint8_t const* const authorizers_ptr, uint64_t assigner) {
-	jb_host_assign_untyped(core_index, (uint64_t)authorizers_ptr, assigner);
+uint64_t jb_host_assign(uint64_t core_index, uint8_t const* const authorizers_ptr, uint64_t assigner) {
+	return jb_host_assign_untyped(core_index, (uint64_t)authorizers_ptr, assigner);
 }

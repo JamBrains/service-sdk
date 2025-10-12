@@ -32,7 +32,11 @@ void jb_hook_accumulate(jb_accumulate_arguments_t *args) {
     printf("  assigner: %lu\n", assigner);
     
     // Call the assign host function
-    jb_host_assign(core_index, authorizers, assigner);
+    uint64_t result = jb_host_assign(core_index, authorizers, assigner);
+    if (result != HOST_OK) {
+        fprintf(stderr, "Call to assign failed: %s\n", jb_host_result_name(result));
+        POLKAVM_TRAP();
+    }
     
     puts("Assign operation completed successfully!");
     printf("Remaining gas: %lu\n", jb_service_gas_remaining());
