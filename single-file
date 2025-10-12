@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# single-file: A wrapper script for polkavm-cc that compiles and links single C files
+# Usage: single-file <input.c> [output-name] [additional polkavm-cc flags...]
+#
+# This script:
+# 1. Takes a C file as input
+# 2. Optionally takes an output name (without extension) as second argument
+# 3. Compiles it with all SDK files linked in
+# 4. Links the result with polkatool
+# 5. Produces a .jam output file
+
+if [ $# -lt 1 ]; then
+    echo "Usage: single-file <input.c> [output-name] [additional polkavm-cc flags...]"
+    echo "Example: single-file my-program.c"
+    echo "Example: single-file my-program.c custom-output -O2"
+    exit 1
+fi
+
+INPUT_FILE="$1"
+shift
+
+if [ ! -f "$INPUT_FILE" ]; then
+    echo "Error: Input file '$INPUT_FILE' does not exist"
+    exit 1
+fi
+
+# Check if second argument is an output name or a compiler flag
+OUTPUT_NAME=""
+if [ $# -gt 0 ] && [[ ! "$1" =~ ^- ]]; then
+    OUTPUT_NAME="$1"
+    shift
+fi
+
+# Get the basename without extension for output naming
+if [ -n "$OUTPUT_NAME" ]; then
+    BASENAME="$OUTPUT_NAME"
+else
+    BASENAME=$(basename "$INPUT_FILE" .c)
+fi
+ELF_FILE="${BASENAME}.elf"
+JAM_FILE="${BASENAME}.jam"
+
+# Default CC flags (can be overridden by environment variable)
+CC_FLAGS="${CC_FLAGS:--Wl,--error-limit=0 -flto -O0 -std=gnu23 -I/opt/sdk}"
+
+# Default polkatool flags (can be overridden by environment variable)
+if [ -z "${POLKATOOL_FLAGS:-}" ]; then
+    POLKATOOL_FLAGS="--min-stack-size 131072 --dispatch-table _jb_entry_accumulate,_jb_entry_accumulate,_jb_entry_accumulate,_jb_entry_accumulate"
+fi
+
+# Collect all SDK C files
+SDK_FILES=$(ls /opt/sdk/*.c 2>/dev/null || echo "")
+
+# Create a temporary directory for our work
+TEMP_DIR=$(mktemp -d)
+trap "rm -rf $TEMP_DIR" EXIT
+
+# Copy the input file
+TEMP_SOURCE="$TEMP_DIR/source.c"
+cp "$INPUT_FILE" "$TEMP_SOURCE"
+
+# Step 1: Compile with polkavm-cc
+TEMP_ELF="$TEMP_DIR/${BASENAME}.elf"
+polkavm-cc $CC_FLAGS "$@" "$TEMP_SOURCE" $SDK_FILES -o "$TEMP_ELF"
+
+# Step 2: Link with polkatool
+polkatool link $POLKATOOL_FLAGS "$TEMP_ELF" -o "$JAM_FILE"
+
+echo "Successfully compiled and linked $INPUT_FILE to $JAM_FILE"

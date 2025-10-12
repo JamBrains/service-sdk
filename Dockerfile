@@ -35,16 +35,16 @@ ENV PATH="/opt/thirdparty/polkaports/sysroot-polkavm/bin:${PATH}"
 # Integrity checks in builder
 RUN polkavm-cc --help && polkavm-c++ --help && polkatool --help
 
-# Runtime stage - minimal image with only runtime dependencies
+
+#################################
+# Stage 2
+#################################
 FROM debian:13-slim AS runtime
 
-# Copy Wget
-RUN apt-get update && apt-get install -y wget lsb-release gnupg build-essential && apt-get clean
+RUN apt-get update && apt-get install -y wget lsb-release gnupg build-essential jq && apt-get clean
 
 # Install lld-20 to match clang-20
 RUN wget https://apt.llvm.org/llvm.sh && chmod u+x llvm.sh && ./llvm.sh 20
-
-#RUN apt-get remove -y --purge g++* python* && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /opt /opt
 
@@ -68,6 +68,20 @@ ENV PATH="/opt/thirdparty/polkaports/sysroot-polkavm/bin:${PATH}"
 RUN polkavm-cc --help && polkavm-c++ --help && polkatool --help
 
 WORKDIR /app
+
+# Copy SDK files and hello-world example for single-file compilation mode
+# These are placed at the end to avoid invalidating Docker cache
+COPY sdk /opt/sdk
+
+# Copy examples directory for generate-examples command
+COPY examples /opt/examples
+
+# Install the single-file compilation script
+COPY single-file /usr/local/bin/single-file
+RUN chmod +x /usr/local/bin/single-file
+
+COPY generate-examples /usr/local/bin/generate-examples
+RUN chmod +x /usr/local/bin/generate-examples
 
 # Set this as default command, but allow people to also use CC instead.
 CMD ["clang++-20"]
