@@ -23,11 +23,15 @@ void jb_host_info(uint64_t service_id, jb_service_info_t* out_ptr) {
 	jb_host_info_untyped(service_id, (uint64_t)out_ptr, 0, sizeof(jb_service_info_t));
 }
 
+// TODO make one abstraction without strlen
+void jb_host_log(uint64_t level, uint8_t const* const target, uint64_t target_len, uint8_t const* const msg, uint64_t msg_len) {
+	jb_host_log_untyped(level, (uint64_t)target, target_len, (uint64_t)msg, msg_len);
+}
+
 void jb_host_bless(uint64_t manager, uint8_t const* const assigners_ptr, uint64_t delegator, uint64_t registrar, uint8_t const* const extra_ptr, uint64_t extra_count) {
 	jb_host_bless_untyped(manager, (uint64_t)assigners_ptr, delegator, registrar, (uint64_t)extra_ptr, extra_count);
 }
 
-// TODO make one abstraction without strlen
-void jb_host_log(uint64_t level, uint8_t const* const target, uint64_t target_len, uint8_t const* const msg, uint64_t msg_len) {
-	jb_host_log_untyped(level, (uint64_t)target, target_len, (uint64_t)msg, msg_len);
+void jb_host_assign(uint64_t core_index, uint8_t const* const authorizers_ptr, uint64_t assigner) {
+	jb_host_assign_untyped(core_index, (uint64_t)authorizers_ptr, assigner);
 }
