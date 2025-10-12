@@ -70,3 +70,7 @@ uint64_t jb_host_assign(uint64_t core_index, uint8_t const* const authorizers_pt
 uint64_t jb_host_designate(uint8_t const* const validators_ptr) {
 	return jb_host_designate_untyped((uint64_t)validators_ptr);
 }
+
+uint64_t jb_host_checkpoint() {
+	return jb_host_checkpoint_untyped();
+}

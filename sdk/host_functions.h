@@ -45,3 +45,5 @@ uint64_t jb_host_bless(uint64_t manager, uint8_t const* const assigners_ptr, uin
 uint64_t jb_host_assign(uint64_t core_index, uint8_t const* const authorizers_ptr, uint64_t assigner);
 
 uint64_t jb_host_designate(uint8_t const* const validators_ptr);
+
+uint64_t jb_host_checkpoint();

@@ -1,3 +1,4 @@
+#include "host.h"
 #include "jb_storage.h"
 #include "host_functions.h"
 
@@ -65,4 +66,11 @@ jb_result_t jb_storage_kv_deletes(char const* const key_ptr) {
 		return JB_OK;
 
 	return res;
+}
+
+void assert_ok(jb_result_t result) {
+    if (result != JB_OK) {
+        fprintf(stderr, "Failed to write to storage: %s\n", jb_result_name(result));
+        POLKAVM_TRAP();
+    }
 }
