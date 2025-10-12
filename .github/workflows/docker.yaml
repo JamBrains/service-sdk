@@ -18,7 +18,7 @@ env:
 
 jobs:
   docker:
-    runs-on: depot-ubuntu-24.04
+    runs-on: ubuntu-24.04
 
     permissions:
       contents: read
@@ -58,9 +58,9 @@ jobs:
       -
         name: Test Docker image
         run: |
-          docker run -v $(pwd):/app --rm ${{ env.IMAGE }} version
-          docker run -v $(pwd):/app --rm ${{ env.IMAGE }} system
-          docker run -v $(pwd):/app --rm ${{ env.IMAGE }} help
+          docker run -v $(pwd):/app --rm ${{ env.IMAGE }} single-file examples/01-hello-world.c
+          stat 01-hello-world.jam
+          # TODO run it
       -
         name: Push Docker image
         uses: docker/build-push-action@v6
