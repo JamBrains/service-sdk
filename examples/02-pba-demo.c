@@ -7,8 +7,8 @@
 #include <stdio.h>
 #include <string.h>
 
-void jb_hook_accumulate(jb_accumulate_arguments_t* _args) {
-    printf("Accumulate called with timeslot: %u, service_id: %u, num_operands: %lu\n", _args->timeslot, _args->service_id, _args->num_operands);
+void jb_hook_accumulate(jb_accumulate_arguments_t* args) {
+    printf("Accumulate called with timeslot: %u, service_id: %u, num_operands: %lu\n", args->timeslot, args->service_id, args->num_operands);
     printf("Balance: %lu, gas remaining: %lu\n", jb_service_balance(), jb_service_gas_remaining());
 
     // Print all chain params. Will produce something like this:

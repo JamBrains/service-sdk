@@ -80,5 +80,8 @@ COPY examples /opt/examples
 COPY single-file /usr/local/bin/single-file
 RUN chmod +x /usr/local/bin/single-file
 
+COPY generate-examples /usr/local/bin/generate-examples
+RUN chmod +x /usr/local/bin/generate-examples
+
 # Set this as default command, but allow people to also use CC instead.
 CMD ["clang++-20"]

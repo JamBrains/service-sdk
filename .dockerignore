@@ -3,4 +3,4 @@
 !sdk/
 !single-file
 !generate-examples
-!examples
+!examples/*.c
