@@ -4,3 +4,4 @@
 !single-file
 !generate-examples
 !examples/*.c
+examples.txt
