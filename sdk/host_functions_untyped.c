@@ -15,6 +15,7 @@
 // === Accumulate ===
 /* BLESS */ POLKAVM_IMPORT_WITH_INDEX(14, uint64_t, _jb_host_bless_untyped, uint64_t /*manager*/, uint64_t /*assigners_ptr*/, uint64_t /*delegator*/, uint64_t /*registrar*/, uint64_t /*extra_ptr*/, uint64_t /*extra_count*/);
 /* ASSIGN */ POLKAVM_IMPORT_WITH_INDEX(15, uint64_t, _jb_host_assign_untyped, uint64_t /*core_index*/, uint64_t /*address*/, uint64_t /*assigner*/);
+/* DESIGNATE */ POLKAVM_IMPORT_WITH_INDEX(16, uint64_t, _jb_host_designate_untyped, uint64_t /*validators_ptr*/);
 
 
 uint64_t jb_host_gas_untyped() {
@@ -49,4 +50,8 @@ uint64_t jb_host_bless_untyped(uint64_t manager, uint64_t assigners_ptr, uint64_
 
 uint64_t jb_host_assign_untyped(uint64_t core_index, uint64_t authorizers_ptr, uint64_t assigner) {
     return _jb_host_assign_untyped(core_index, authorizers_ptr, assigner);
+}
+
+uint64_t jb_host_designate_untyped(uint64_t validators_ptr) {
+    return _jb_host_designate_untyped(validators_ptr);
 }

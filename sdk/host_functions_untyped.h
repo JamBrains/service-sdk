@@ -21,3 +21,4 @@ They always assume that every argument is a uint64 and that the return value as 
 // === Accumulate ===
 /* 014 */ uint64_t jb_host_bless_untyped(uint64_t manager, uint64_t assigners_ptr, uint64_t delegator, uint64_t registrar, uint64_t extra_ptr, uint64_t extra_count);
 /* 015 */ uint64_t jb_host_assign_untyped(uint64_t core_index, uint64_t authorizers_ptr, uint64_t assigner);
+/* 016 */ uint64_t jb_host_designate_untyped(uint64_t validators_ptr);

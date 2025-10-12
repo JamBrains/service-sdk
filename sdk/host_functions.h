@@ -43,3 +43,5 @@ void jb_host_log(uint64_t level, uint8_t const* const target, uint64_t target_le
 uint64_t jb_host_bless(uint64_t manager, uint8_t const* const assigners_ptr, uint64_t delegator, uint64_t registrar, uint8_t const* const extra_ptr, uint64_t extra_count);
 
 uint64_t jb_host_assign(uint64_t core_index, uint8_t const* const authorizers_ptr, uint64_t assigner);
+
+uint64_t jb_host_designate(uint8_t const* const validators_ptr);
