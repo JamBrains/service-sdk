@@ -1,5 +1,4 @@
 #include "host_functions_untyped.h"
-#include "host_functions.h"
 #include "host.h"
 
 #include <stdint.h>
@@ -21,6 +20,12 @@
 /* NEW */ POLKAVM_IMPORT_WITH_INDEX(18, uint64_t, _jb_host_new_untyped, uint64_t /*code_hash_ptr*/, uint64_t /*code_length*/, uint64_t /*min_gas_accumulate*/, uint64_t /*min_gas_memo*/, uint64_t /*gratis_storage_offset*/, uint64_t /*desired_id*/);
 /* UPGRADE */ POLKAVM_IMPORT_WITH_INDEX(19, uint64_t, _jb_host_upgrade_untyped, uint64_t /*code_hash_ptr*/, uint64_t /*min_gas_accumulate*/, uint64_t /*min_gas_memo*/);
 /* TRANSFER */ POLKAVM_IMPORT_WITH_INDEX(20, uint64_t, _jb_host_transfer_untyped, uint64_t /*receiver_id*/, uint64_t /*amount*/, uint64_t /*gas_limit*/, uint64_t /*memo_ptr*/);
+/* EJECT */ POLKAVM_IMPORT_WITH_INDEX(21, uint64_t, _jb_host_eject_untyped, uint64_t /*service_to_destroy*/, uint64_t /*memo_ptr*/);
+/* QUERY */ POLKAVM_IMPORT_WITH_INDEX(22, uint64_t, _jb_host_query_untyped, uint64_t /*hash_ptr*/, uint64_t /*preimage_length*/);
+/* SOLICIT */ POLKAVM_IMPORT_WITH_INDEX(23, uint64_t, _jb_host_solicit_untyped, uint64_t /*hash_ptr*/, uint64_t /*preimage_length*/);
+/* FORGET */ POLKAVM_IMPORT_WITH_INDEX(24, uint64_t, _jb_host_forget_untyped, uint64_t /*hash_ptr*/, uint64_t /*preimage_length*/);
+/* YIELD */ POLKAVM_IMPORT_WITH_INDEX(25, uint64_t, _jb_host_yield_untyped, uint64_t /*hash_ptr*/);
+/* PROVIDE */ POLKAVM_IMPORT_WITH_INDEX(26, uint64_t, _jb_host_provide_untyped, uint64_t /*service_id*/, uint64_t /*offset*/, uint64_t /*preimage_length*/);
 
 
 uint64_t jb_host_gas_untyped() {
@@ -75,4 +80,28 @@ uint64_t jb_host_upgrade_untyped(uint64_t code_hash_ptr, uint64_t min_gas_accumu
 
 uint64_t jb_host_transfer_untyped(uint64_t receiver_id, uint64_t amount, uint64_t gas_limit, uint64_t memo_ptr) {
     return _jb_host_transfer_untyped(receiver_id, amount, gas_limit, memo_ptr);
+}
+
+uint64_t jb_host_eject_untyped(uint64_t service_to_destroy, uint64_t memo_ptr) {
+    return _jb_host_eject_untyped(service_to_destroy, memo_ptr);
+}
+
+uint64_t jb_host_query_untyped(uint64_t hash_ptr, uint64_t preimage_length) {
+    return _jb_host_query_untyped(hash_ptr, preimage_length);
+}
+
+uint64_t jb_host_solicit_untyped(uint64_t hash_ptr, uint64_t preimage_length) {
+    return _jb_host_solicit_untyped(hash_ptr, preimage_length);
+}
+
+uint64_t jb_host_forget_untyped(uint64_t hash_ptr, uint64_t preimage_length) {
+    return _jb_host_forget_untyped(hash_ptr, preimage_length);
+}
+
+uint64_t jb_host_yield_untyped(uint64_t hash_ptr) {
+    return _jb_host_yield_untyped(hash_ptr);
+}
+
+uint64_t jb_host_provide_untyped(uint64_t service_id, uint64_t offset, uint64_t preimage_length) {
+    return _jb_host_provide_untyped(service_id, offset, preimage_length);
 }

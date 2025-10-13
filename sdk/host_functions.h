@@ -53,3 +53,15 @@ uint64_t jb_host_new(uint8_t const* const code_hash_ptr, uint64_t code_length, u
 uint64_t jb_host_upgrade(uint8_t const* const code_hash_ptr, uint64_t min_gas_accumulate, uint64_t min_gas_memo);
 
 uint64_t jb_host_transfer(uint64_t receiver_id, uint64_t amount, uint64_t gas_limit, uint8_t const* const memo_ptr);
+
+uint64_t jb_host_eject(uint64_t service_to_destroy, uint8_t const* const memo_ptr);
+
+uint64_t jb_host_query(uint8_t const* const hash_ptr, uint64_t preimage_length);
+
+uint64_t jb_host_solicit(uint8_t const* const hash_ptr, uint64_t preimage_length);
+
+uint64_t jb_host_forget(uint8_t const* const hash_ptr, uint64_t preimage_length);
+
+uint64_t jb_host_yield(uint8_t const* const hash_ptr);
+
+uint64_t jb_host_provide(uint64_t service_id, uint64_t offset, uint64_t preimage_length);

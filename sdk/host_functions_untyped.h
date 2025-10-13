@@ -26,3 +26,9 @@ They always assume that every argument is a uint64 and that the return value as 
 /* 018 */ uint64_t jb_host_new_untyped(uint64_t code_hash_ptr, uint64_t code_length, uint64_t min_gas_accumulate, uint64_t min_gas_memo, uint64_t gratis_storage_offset, uint64_t desired_id);
 /* 019 */ uint64_t jb_host_upgrade_untyped(uint64_t code_hash_ptr, uint64_t min_gas_accumulate, uint64_t min_gas_memo);
 /* 020 */ uint64_t jb_host_transfer_untyped(uint64_t receiver_id, uint64_t amount, uint64_t gas_limit, uint64_t memo_ptr);
+/* 021 */ uint64_t jb_host_eject_untyped(uint64_t service_to_destroy, uint64_t memo_ptr);
+/* 022 */ uint64_t jb_host_query_untyped(uint64_t hash_ptr, uint64_t preimage_length);
+/* 023 */ uint64_t jb_host_solicit_untyped(uint64_t hash_ptr, uint64_t preimage_length);
+/* 024 */ uint64_t jb_host_forget_untyped(uint64_t hash_ptr, uint64_t preimage_length);
+/* 025 */ uint64_t jb_host_yield_untyped(uint64_t hash_ptr);
+/* 026 */ uint64_t jb_host_provide_untyped(uint64_t service_id, uint64_t offset, uint64_t preimage_length);

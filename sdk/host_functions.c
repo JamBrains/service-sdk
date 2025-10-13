@@ -86,3 +86,27 @@ uint64_t jb_host_upgrade(const uint8_t *const code_hash_ptr, uint64_t min_gas_ac
 uint64_t jb_host_transfer(uint64_t receiver_id, uint64_t amount, uint64_t gas_limit, const uint8_t *const memo_ptr) {
 	return jb_host_transfer_untyped(receiver_id, amount, gas_limit, (uint64_t)memo_ptr);
 }
+
+uint64_t jb_host_eject(uint64_t service_to_destroy, const uint8_t *const memo_ptr) {
+	return jb_host_eject_untyped(service_to_destroy, (uint64_t)memo_ptr);
+}
+
+uint64_t jb_host_query(const uint8_t *const hash_ptr, uint64_t preimage_length) {
+	return jb_host_query_untyped((uint64_t)hash_ptr, preimage_length);
+}
+
+uint64_t jb_host_solicit(const uint8_t *const hash_ptr, uint64_t preimage_length) {
+	return jb_host_solicit_untyped((uint64_t)hash_ptr, preimage_length);
+}
+
+uint64_t jb_host_forget(const uint8_t *const hash_ptr, uint64_t preimage_length) {
+	return jb_host_forget_untyped((uint64_t)hash_ptr, preimage_length);
+}
+
+uint64_t jb_host_yield(const uint8_t *const hash_ptr) {
+	return jb_host_yield_untyped((uint64_t)hash_ptr);
+}
+
+uint64_t jb_host_provide(uint64_t service_id, uint64_t offset, uint64_t preimage_length) {
+	return jb_host_provide_untyped(service_id, offset, preimage_length);
+}
