@@ -23,3 +23,6 @@ They always assume that every argument is a uint64 and that the return value as 
 /* 015 */ uint64_t jb_host_assign_untyped(uint64_t core_index, uint64_t authorizers_ptr, uint64_t assigner);
 /* 016 */ uint64_t jb_host_designate_untyped(uint64_t validators_ptr);
 /* 017 */ uint64_t jb_host_checkpoint_untyped();
+/* 018 */ uint64_t jb_host_new_untyped(uint64_t code_hash_ptr, uint64_t code_length, uint64_t min_gas_accumulate, uint64_t min_gas_memo, uint64_t gratis_storage_offset, uint64_t desired_id);
+/* 019 */ uint64_t jb_host_upgrade_untyped(uint64_t code_hash_ptr, uint64_t min_gas_accumulate, uint64_t min_gas_memo);
+/* 020 */ uint64_t jb_host_transfer_untyped(uint64_t receiver_id, uint64_t amount, uint64_t gas_limit, uint64_t memo_ptr);

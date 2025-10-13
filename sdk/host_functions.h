@@ -47,3 +47,9 @@ uint64_t jb_host_assign(uint64_t core_index, uint8_t const* const authorizers_pt
 uint64_t jb_host_designate(uint8_t const* const validators_ptr);
 
 uint64_t jb_host_checkpoint();
+
+uint64_t jb_host_new(uint8_t const* const code_hash_ptr, uint64_t code_length, uint64_t min_gas_accumulate, uint64_t min_gas_memo, uint64_t gratis_storage_offset, uint64_t desired_id);
+
+uint64_t jb_host_upgrade(uint8_t const* const code_hash_ptr, uint64_t min_gas_accumulate, uint64_t min_gas_memo);
+
+uint64_t jb_host_transfer(uint64_t receiver_id, uint64_t amount, uint64_t gas_limit, uint8_t const* const memo_ptr);

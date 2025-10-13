@@ -18,6 +18,9 @@
 /* ASSIGN */ POLKAVM_IMPORT_WITH_INDEX(15, uint64_t, _jb_host_assign_untyped, uint64_t /*core_index*/, uint64_t /*address*/, uint64_t /*assigner*/);
 /* DESIGNATE */ POLKAVM_IMPORT_WITH_INDEX(16, uint64_t, _jb_host_designate_untyped, uint64_t /*validators_ptr*/);
 /* CHECKPOINT */ POLKAVM_IMPORT_WITH_INDEX(17, uint64_t, _jb_host_checkpoint_untyped);
+/* NEW */ POLKAVM_IMPORT_WITH_INDEX(18, uint64_t, _jb_host_new_untyped, uint64_t /*code_hash_ptr*/, uint64_t /*code_length*/, uint64_t /*min_gas_accumulate*/, uint64_t /*min_gas_memo*/, uint64_t /*gratis_storage_offset*/, uint64_t /*desired_id*/);
+/* UPGRADE */ POLKAVM_IMPORT_WITH_INDEX(19, uint64_t, _jb_host_upgrade_untyped, uint64_t /*code_hash_ptr*/, uint64_t /*min_gas_accumulate*/, uint64_t /*min_gas_memo*/);
+/* TRANSFER */ POLKAVM_IMPORT_WITH_INDEX(20, uint64_t, _jb_host_transfer_untyped, uint64_t /*receiver_id*/, uint64_t /*amount*/, uint64_t /*gas_limit*/, uint64_t /*memo_ptr*/);
 
 
 uint64_t jb_host_gas_untyped() {
@@ -60,4 +63,16 @@ uint64_t jb_host_designate_untyped(uint64_t validators_ptr) {
 
 uint64_t jb_host_checkpoint_untyped() {
     return _jb_host_checkpoint_untyped();
+}
+
+uint64_t jb_host_new_untyped(uint64_t code_hash_ptr, uint64_t code_length, uint64_t min_gas_accumulate, uint64_t min_gas_memo, uint64_t gratis_storage_offset, uint64_t desired_id) {
+    return _jb_host_new_untyped(code_hash_ptr, code_length, min_gas_accumulate, min_gas_memo, gratis_storage_offset, desired_id);
+}
+
+uint64_t jb_host_upgrade_untyped(uint64_t code_hash_ptr, uint64_t min_gas_accumulate, uint64_t min_gas_memo) {
+    return _jb_host_upgrade_untyped(code_hash_ptr, min_gas_accumulate, min_gas_memo);
+}
+
+uint64_t jb_host_transfer_untyped(uint64_t receiver_id, uint64_t amount, uint64_t gas_limit, uint64_t memo_ptr) {
+    return _jb_host_transfer_untyped(receiver_id, amount, gas_limit, memo_ptr);
 }

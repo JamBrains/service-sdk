@@ -74,3 +74,15 @@ uint64_t jb_host_designate(uint8_t const* const validators_ptr) {
 uint64_t jb_host_checkpoint() {
 	return jb_host_checkpoint_untyped();
 }
+
+uint64_t jb_host_new(const uint8_t *const code_hash_ptr, uint64_t code_length, uint64_t min_gas_accumulate, uint64_t min_gas_memo, uint64_t gratis_storage_offset, uint64_t desired_id) {
+	return jb_host_new_untyped((uint64_t)code_hash_ptr, code_length, min_gas_accumulate, min_gas_memo, gratis_storage_offset, desired_id);
+}
+
+uint64_t jb_host_upgrade(const uint8_t *const code_hash_ptr, uint64_t min_gas_accumulate, uint64_t min_gas_memo) {
+	return jb_host_upgrade_untyped((uint64_t)code_hash_ptr, min_gas_accumulate, min_gas_memo);
+}
+
+uint64_t jb_host_transfer(uint64_t receiver_id, uint64_t amount, uint64_t gas_limit, const uint8_t *const memo_ptr) {
+	return jb_host_transfer_untyped(receiver_id, amount, gas_limit, (uint64_t)memo_ptr);
+}
