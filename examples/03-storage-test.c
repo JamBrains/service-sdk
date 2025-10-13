@@ -42,13 +42,6 @@ void assert_bytes_and_items_in_storage(uint64_t bytes, uint64_t items) {
     assert_items_in_storage(items);
 }
 
-void assert_ok(jb_result_t result) {
-    if (result != JB_OK) {
-        fprintf(stderr, "Failed to write to storage: %s\n", jb_result_name(result));
-        POLKAVM_TRAP();
-    }
-}
-
 void jb_hook_accumulate(jb_accumulate_arguments_t*) {
     printf("Balance: %lu, gas remaining: %lu\n", jb_service_balance(), jb_service_gas_remaining());
     uint64_t bytes_in_storage = 0; // a_o

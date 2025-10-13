@@ -42,3 +42,5 @@ jb_result_t jb_storage_kv_writes(char const* const key_ptr, char const* const va
 
 jb_result_t jb_storage_kv_delete_existings(char const* const key_ptr);
 jb_result_t jb_storage_kv_deletes(char const* const key_ptr);
+
+void assert_ok(jb_result_t);
