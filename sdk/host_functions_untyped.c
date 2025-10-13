@@ -12,6 +12,17 @@
 /* INFO */ POLKAVM_IMPORT_WITH_INDEX(5, uint64_t, _jb_host_info_untyped, uint64_t /*service_id*/, uint64_t /*out_ptr*/, uint64_t /*offset*/, uint64_t /*length*/);
 /* LOG */ POLKAVM_IMPORT_WITH_INDEX(100, uint64_t, _jb_host_log_untyped, uint64_t /*level*/, uint64_t /*target*/, uint64_t /*target_len*/, uint64_t /*msg*/, uint64_t /*msg_len*/);
 
+// === Refine ===
+
+/* HISTORICAL_LOOKUP */ POLKAVM_IMPORT_WITH_INDEX(6, uint64_t, _jb_host_historical_lookup_untyped, uint64_t /*target_service_id*/, uint64_t /*hash_ptr*/, uint64_t /*out_ptr*/, uint64_t /*preimage_length*/);
+/* EXPORT */ POLKAVM_IMPORT_WITH_INDEX(7, uint64_t, _jb_host_export_untyped, uint64_t /*export_ptr*/, uint64_t /*length*/);
+/* MACHINE */ POLKAVM_IMPORT_WITH_INDEX(8, uint64_t, _jb_host_machine_untyped, uint64_t /*code_ptr*/, uint64_t /*code_length*/, uint64_t /*program_counter*/);
+/* PEEK */ POLKAVM_IMPORT_WITH_INDEX(9, uint64_t, _jb_host_peek_untyped, uint64_t /*machine_id*/, uint64_t /*out_ptr*/, uint64_t /*in_ptr*/, uint64_t /*length*/);
+/* POKE */ POLKAVM_IMPORT_WITH_INDEX(10, uint64_t, _jb_host_poke_untyped, uint64_t /*machine_id*/, uint64_t /*in_ptr*/, uint64_t /*out_ptr*/, uint64_t /*length*/);
+/* PAGES */ POLKAVM_IMPORT_WITH_INDEX(11, uint64_t, _jb_host_pages_untyped, uint64_t /*machine_id*/, uint64_t /*start_page*/, uint64_t /*page_count*/, uint64_t /*mode*/);
+/* INVOKE */ POLKAVM_IMPORT_WITH_INDEX(12, uint64_t, _jb_host_invoke_untyped, uint64_t /*machine_id*/, uint64_t /*parameters_ptr*/);
+/* EXPUNGE */ POLKAVM_IMPORT_WITH_INDEX(13, uint64_t, _jb_host_expunge_untyped, uint64_t /*machine_id*/);
+
 // === Accumulate ===
 /* BLESS */ POLKAVM_IMPORT_WITH_INDEX(14, uint64_t, _jb_host_bless_untyped, uint64_t /*manager*/, uint64_t /*assigners_ptr*/, uint64_t /*delegator*/, uint64_t /*registrar*/, uint64_t /*extra_ptr*/, uint64_t /*extra_count*/);
 /* ASSIGN */ POLKAVM_IMPORT_WITH_INDEX(15, uint64_t, _jb_host_assign_untyped, uint64_t /*core_index*/, uint64_t /*address*/, uint64_t /*assigner*/);
@@ -27,6 +38,7 @@
 /* YIELD */ POLKAVM_IMPORT_WITH_INDEX(25, uint64_t, _jb_host_yield_untyped, uint64_t /*hash_ptr*/);
 /* PROVIDE */ POLKAVM_IMPORT_WITH_INDEX(26, uint64_t, _jb_host_provide_untyped, uint64_t /*service_id*/, uint64_t /*offset*/, uint64_t /*preimage_length*/);
 
+// === General ===
 
 uint64_t jb_host_gas_untyped() {
     return _jb_host_gas_untyped();
@@ -53,6 +65,42 @@ uint64_t jb_host_info_untyped(uint64_t service_id, uint64_t out_ptr, uint64_t of
 uint64_t jb_host_log_untyped(uint64_t level, uint64_t target, uint64_t target_len, uint64_t msg, uint64_t msg_len) {
     return _jb_host_log_untyped(level, target, target_len, msg, msg_len);
 }
+
+// === Refine ===
+
+uint64_t jb_host_historical_lookup_untyped(uint64_t target_service_id, uint64_t hash_ptr, uint64_t out_ptr, uint64_t preimage_length) {
+    return _jb_host_historical_lookup_untyped(target_service_id, hash_ptr, out_ptr, preimage_length);
+}
+
+uint64_t jb_host_export_untyped(uint64_t export_ptr, uint64_t length) {
+    return _jb_host_export_untyped(export_ptr, length);
+}
+
+uint64_t jb_host_machine_untyped(uint64_t code_ptr, uint64_t code_length, uint64_t program_counter) {
+    return _jb_host_machine_untyped(code_ptr, code_length, program_counter);
+}
+
+uint64_t jb_host_peek_untyped(uint64_t machine_id, uint64_t out_ptr, uint64_t in_ptr, uint64_t length) {
+    return _jb_host_peek_untyped(machine_id, out_ptr, in_ptr, length);
+}
+
+uint64_t jb_host_poke_untyped(uint64_t machine_id, uint64_t in_ptr, uint64_t out_ptr, uint64_t length) {
+    return _jb_host_poke_untyped(machine_id, in_ptr, out_ptr, length);
+}
+
+uint64_t jb_host_pages_untyped(uint64_t machine_id, uint64_t start_page, uint64_t page_count, uint64_t mode) {
+    return _jb_host_pages_untyped(machine_id, start_page, page_count, mode);
+}
+
+uint64_t jb_host_invoke_untyped(uint64_t machine_id, uint64_t parameters_ptr) {
+    return _jb_host_invoke_untyped(machine_id, parameters_ptr);
+}
+
+uint64_t jb_host_expunge_untyped(uint64_t machine_id) {
+    return _jb_host_expunge_untyped(machine_id);
+}
+
+// === Accumulate ===
 
 uint64_t jb_host_bless_untyped(uint64_t manager, uint64_t assigners_ptr, uint64_t delegator, uint64_t registrar, uint64_t extra_ptr, uint64_t extra_count) {
     return _jb_host_bless_untyped(manager, assigners_ptr, delegator, registrar, extra_ptr, extra_count);

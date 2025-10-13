@@ -18,6 +18,16 @@ They always assume that every argument is a uint64 and that the return value as 
 /* 005 */ uint64_t jb_host_info_untyped(uint64_t service_id, uint64_t out_ptr, uint64_t offset, uint64_t length);
 /* 100 */ uint64_t jb_host_log_untyped(uint64_t level, uint64_t target, uint64_t target_len, uint64_t msg, uint64_t msg_len);
 
+// === Refine ===
+/* 006 */ uint64_t jb_host_historical_lookup_untyped(uint64_t target_service_id, uint64_t hash_ptr, uint64_t out_ptr, uint64_t preimage_length);
+/* 007 */ uint64_t jb_host_export_untyped(uint64_t export_ptr, uint64_t length);
+/* 008 */ uint64_t jb_host_machine_untyped(uint64_t code_ptr, uint64_t code_length, uint64_t program_counter);
+/* 009 */ uint64_t jb_host_peek_untyped(uint64_t machine_id, uint64_t out_ptr, uint64_t in_ptr, uint64_t length);
+/* 010 */ uint64_t jb_host_poke_untyped(uint64_t machine_id, uint64_t in_ptr, uint64_t out_ptr, uint64_t length);
+/* 011 */ uint64_t jb_host_pages_untyped(uint64_t machine_id, uint64_t start_page, uint64_t page_count, uint64_t mode);
+/* 012 */ uint64_t jb_host_invoke_untyped(uint64_t machine_id, uint64_t parameters_ptr);
+/* 013 */ uint64_t jb_host_expunge_untyped(uint64_t machine_id);
+
 // === Accumulate ===
 /* 014 */ uint64_t jb_host_bless_untyped(uint64_t manager, uint64_t assigners_ptr, uint64_t delegator, uint64_t registrar, uint64_t extra_ptr, uint64_t extra_count);
 /* 015 */ uint64_t jb_host_assign_untyped(uint64_t core_index, uint64_t authorizers_ptr, uint64_t assigner);

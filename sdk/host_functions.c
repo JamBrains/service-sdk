@@ -57,6 +57,40 @@ void jb_host_log(uint64_t level, uint8_t const* const target, uint64_t target_le
 	jb_host_log_untyped(level, (uint64_t)target, target_len, (uint64_t)msg, msg_len);
 }
 
+// === Refine ===
+
+uint64_t jb_host_historical_lookup(uint64_t target_service_id, uint8_t const* const hash_ptr, uint8_t* out_ptr, uint64_t preimage_length) {
+	return jb_host_historical_lookup_untyped(target_service_id, (uint64_t)hash_ptr, (uint64_t)out_ptr, preimage_length);
+}
+
+uint64_t jb_host_export(uint8_t const* const export_ptr, uint64_t length) {
+	return jb_host_export_untyped((uint64_t)export_ptr, length);
+}
+
+uint64_t jb_host_machine(uint8_t const* const code_ptr, uint64_t code_length, uint64_t program_counter) {
+	return jb_host_machine_untyped((uint64_t)code_ptr, code_length, program_counter);
+}
+
+uint64_t jb_host_peek(uint64_t machine_id, uint8_t* out_ptr, uint8_t const* const in_ptr, uint64_t length) {
+	return jb_host_peek_untyped(machine_id, (uint64_t)out_ptr, (uint64_t)in_ptr, length);
+}
+
+uint64_t jb_host_poke(uint64_t machine_id, uint8_t const* const in_ptr, uint8_t* out_ptr, uint64_t length) {
+	return jb_host_poke_untyped(machine_id, (uint64_t)in_ptr, (uint64_t)out_ptr, length);
+}
+
+uint64_t jb_host_pages(uint64_t machine_id, uint64_t start_page, uint64_t page_count, uint64_t mode) {
+	return jb_host_pages_untyped(machine_id, start_page, page_count, mode);
+}
+
+uint64_t jb_host_invoke(uint64_t machine_id, uint8_t const* const parameters_ptr) {
+	return jb_host_invoke_untyped(machine_id, (uint64_t)parameters_ptr);
+}
+
+uint64_t jb_host_expunge(uint64_t machine_id) {
+	return jb_host_expunge_untyped(machine_id);
+}
+
 // === Accumulate ===
 
 uint64_t jb_host_bless(uint64_t manager, uint8_t const* const assigners_ptr, uint64_t delegator, uint64_t registrar, uint8_t const* const extra_ptr, uint64_t extra_count) {
