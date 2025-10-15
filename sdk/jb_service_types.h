@@ -75,3 +75,17 @@ typedef struct {
 jb_result_t jb_accumulate_arguments_decode(uint8_t* in_buff, uint64_t in_remaining, jb_accumulate_arguments_t* out_value);
 
 uint64_t jb_accumulate_arguments_fmt(jb_accumulate_arguments_t* args, char* buffer, uint64_t buffer_len);
+
+typedef struct {
+	uint32_t core_index;
+	uint32_t work_item_index;
+	uint32_t service_id;
+	uint8_t* work_payload;
+	uint64_t work_payload_len;
+	uint8_t work_package_hash[32];
+} jb_refine_arguments_t;
+
+/// Decode function for `jb_refine_arguments_t`. Final; does not chain.
+jb_result_t jb_refine_arguments_decode(uint8_t* in_buff, uint64_t in_remaining, jb_refine_arguments_t* out_value);
+
+uint64_t jb_refine_arguments_fmt(jb_refine_arguments_t* args, char* buffer, uint64_t buffer_len);

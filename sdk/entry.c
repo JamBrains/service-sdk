@@ -29,8 +29,15 @@ void _jb_entry_is_authorized() {
 	jb_hook_is_authorized();
 }
 
-void _jb_entry_refine() {
-	jb_hook_refine();
+void _jb_entry_refine(void *arg_ptr, uint64_t arg_len) {
+	jb_refine_arguments_t args;
+	jb_result_t result = jb_refine_arguments_decode((uint8_t*)arg_ptr, arg_len, &args);
+	if (result != JB_OK) {
+		fprintf(stderr, "Could not decode refine args\n");
+		return;
+	}
+
+	jb_hook_refine(&args);
 }
 
 void _jb_entry_accumulate(void* arg_ptr, uint64_t arg_len) {
@@ -48,7 +55,7 @@ void _jb_entry_accumulate(void* arg_ptr, uint64_t arg_len) {
 
 POLKAVM_EXPORT(void, _jb_entry_on_transfer);
 POLKAVM_EXPORT(void, _jb_entry_is_authorized);
-POLKAVM_EXPORT(void, _jb_entry_refine);
+POLKAVM_EXPORT(void, _jb_entry_refine, void*, uint64_t);
 POLKAVM_EXPORT(void, _jb_entry_accumulate, void*, uint64_t);
 
 // TODO still needed?

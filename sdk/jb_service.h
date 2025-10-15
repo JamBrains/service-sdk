@@ -32,7 +32,7 @@ void jb_hook_on_transfer(char** _out_ptr, uint64_t* _out_len);
 void jb_hook_is_authorized();
 
 /// @brief You have to implement this for your service to be able to refine
-void jb_hook_refine();
+void jb_hook_refine(jb_refine_arguments_t*);
 
 /// @brief You have to implement this for your service to be able to be accumulated
 void jb_hook_accumulate(jb_accumulate_arguments_t*);
