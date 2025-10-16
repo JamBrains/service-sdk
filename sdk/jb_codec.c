@@ -35,6 +35,7 @@ jb_result_t jb_codec_decode_general_int(uint8_t** buff, uint64_t* remaining, uin
 		*out = *(uint64_t*)*buff;
 		*buff += 8;
 		*remaining -= 8;
+		return JB_OK;
 	}
 
 	// TODO use gnu89 range switch

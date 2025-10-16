@@ -36,6 +36,11 @@ compile out_file *in_files:
 	#!/usr/bin/env bash
 	set -e
 
+	if [ -z "$DOCKER" ]; then
+		echo "DOCKER environment variable is not set. Please run either 'just docker' or 'just podman' in the root folder first."
+		exit 1
+	fi
+
 	# List all files in /opt/sdk
 	FILES=$(ls ../sdk/*.c)
 	# Replace their relative path with an absolute path of /opt/sdk

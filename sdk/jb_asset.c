@@ -1,6 +1,8 @@
 #include "jb_asset.h"
 #include "jb_log.h"
+#include "jb_result.h"
 #include "host.h"
+
 
 void assertion_failure(char const *const error_msg)
 {
@@ -15,6 +17,14 @@ void assertion_failure(char const *const error_msg)
 void jb_assert(uint64_t v, char const *const error_msg)
 {
 	jb_assert_not_zero(v, error_msg);
+}
+
+void jb_assert_ok(jb_result_t r, char const *const error_msg)
+{
+	if (r != JB_OK)
+	{
+		assertion_failure(error_msg);
+	}
 }
 
 void jb_assert_not_zero(uint64_t v, char const *const error_msg)
