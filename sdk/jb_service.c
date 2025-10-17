@@ -51,3 +51,12 @@ jb_service_info_t jb_service_info_of(uint64_t service_id) {
 jb_service_info_t jb_service_info() {
 	return jb_service_info_of(0xffffffffffffffff);
 }
+
+void return_to_host(const uint8_t *const ptr, const uint64_t len) {
+	__asm__ volatile(
+		"mv " JAM_REG_0 ", %0\n\t"
+		"mv " JAM_REG_1 ", %1"
+		:
+		: "r"((uint64_t)ptr), "r"(len)
+		: JAM_REG_0, JAM_REG_1);
+}
