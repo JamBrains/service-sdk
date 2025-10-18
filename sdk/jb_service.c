@@ -28,7 +28,7 @@ uint64_t jb_service_balance() {
 
 void jb_service_accumulate_operands() {
 	// TODO optimize by optimistically alloc 1KB on the stack, maybe it fits and if not then we still get the first part
-	uint64_t encoded_len = jb_host_fetch(NULL, 0, 0, JB_FETCH_DISCRIMINATOR_OPERANDS, 0, 0);
+	uint64_t encoded_len = jb_host_fetch(NULL, 0, 0, JB_FETCH_DISCRIMINATOR_INPUTS, 0, 0);
 	if (encoded_len == 0)
 		return;
 
@@ -37,7 +37,7 @@ void jb_service_accumulate_operands() {
 		return; // JB_ERR_MALLOC;
 
 	// TODO handle err
-	jb_host_fetch(NULL, 0, encoded_len, JB_FETCH_DISCRIMINATOR_OPERANDS, 0, 0);
+	jb_host_fetch(NULL, 0, encoded_len, JB_FETCH_DISCRIMINATOR_INPUTS, 0, 0);
 
 	free(buff);
 }

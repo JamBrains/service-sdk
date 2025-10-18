@@ -9,7 +9,7 @@
 #define NUMBER_OF_VALIDATORS 6
 
 void jb_hook_accumulate(jb_accumulate_arguments_t *args) {
-    printf("Accumulate called with timeslot: %u, service_id: %u, num_operands: %lu\n", args->timeslot, args->service_id, args->num_operands);
+    printf("Accumulate called with timeslot: %u, service_id: %u, num_operands: %lu\n", args->timeslot, args->service_id, args->num_inputs);
 
     puts("=== Designate Host Function Test ===");
     printf("Balance: %lu, gas remaining: %lu\n", jb_service_balance(), jb_service_gas_remaining());

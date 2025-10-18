@@ -2,12 +2,14 @@
 
 #include <stdint.h>
 #include "jb_service_types.h"
+#include "jb_storage.h"
 
 uint64_t jb_host_gas();
 
 #define JB_FETCH_DISCRIMINATOR_CHAIN_PARAMS 0
 #define JB_FETCH_DISCRIMINATOR_CHAIN_ENTROPY32 1
-#define JB_FETCH_DISCRIMINATOR_OPERANDS 14
+#define JB_FETCH_DISCRIMINATOR_NTH_ITEM_PAYLOAD 13
+#define JB_FETCH_DISCRIMINATOR_INPUTS 14
 
 /// W_10 register discriminator for the  fetch host call.
 typedef uint64_t jb_fetch_discriminator_t;
@@ -25,6 +27,7 @@ typedef uint64_t jb_fetch_discriminator_t;
 #define HOST_OK ((uint64_t)0)
 
 char const* jb_host_result_name(uint64_t host_result);
+void assert_host_ok(uint64_t);
 
 // === General ===
 

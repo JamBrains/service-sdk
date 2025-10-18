@@ -30,6 +30,22 @@ char const* jb_host_result_name(uint64_t host_result) {
 	}
 }
 
+void assert_host_ok(uint64_t result) {
+	if (
+		result == HOST_NONE ||
+		result == HOST_WHAT ||
+		result == HOST_OOB ||
+		result == HOST_WHO ||
+		result == HOST_FULL ||
+		result == HOST_CORE ||
+		result == HOST_CASH ||
+		result == HOST_LOW ||
+		result == HOST_HUH
+	) {
+		POLKAVM_TRAP();
+	}
+}
+
 // === GENERAL ===
 
 uint64_t jb_host_gas() {

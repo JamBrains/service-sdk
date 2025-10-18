@@ -25,6 +25,8 @@ void _jb_entry_is_authorized() {
 }
 
 void _jb_entry_refine(void *arg_ptr, uint64_t arg_len) {
+	jb_init("Refine");
+
 	jb_refine_arguments_t args;
 	jb_result_t result = jb_refine_arguments_decode((uint8_t*)arg_ptr, arg_len, &args);
 	if (result != JB_OK) {
@@ -36,7 +38,7 @@ void _jb_entry_refine(void *arg_ptr, uint64_t arg_len) {
 }
 
 void _jb_entry_accumulate(void* arg_ptr, uint64_t arg_len) {
-	jb_init("JB Service");
+	jb_init("Accumulate");
 	
 	jb_accumulate_arguments_t args;
     jb_result_t res = jb_accumulate_arguments_decode((uint8_t*)arg_ptr, arg_len, &args);
