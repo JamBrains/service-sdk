@@ -1,3 +1,0 @@
-default:
-	just null-authorizer/
-	just example/

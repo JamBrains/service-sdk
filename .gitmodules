@@ -1,0 +1,3 @@
+[submodule "thirdparty/polkaports"]
+	path = thirdparty/polkaports
+	url = https://github.com/JamBrains/polkaports

@@ -1,5 +1,11 @@
-/target
-pvme/target
+sysroot/
+lang-c/*.asm
 *.elf
+*.pvm
+.vscode/
+.claude/
+.DS_Store
 .env
-*.pmv
+sdk/output/
+examples/output/
+examples.txt
