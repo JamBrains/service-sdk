@@ -25,9 +25,6 @@ jb_service_info_t jb_service_info();
 /// @brief Get the info of the given service id.
 jb_service_info_t jb_service_info_of(uint64_t service_id);
 
-/// @brief You have to implement this for your service to be able to receive transfers
-void jb_hook_on_transfer(char** _out_ptr, uint64_t* _out_len);
-
 /// @brief You have to implement this for your service to be able to refine
 void jb_hook_refine(jb_refine_arguments_t*);
 
