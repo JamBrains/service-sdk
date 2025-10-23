@@ -20,6 +20,11 @@ typedef struct {
     uint64_t *numbers;
 } refine_payload_t;
 
+// The authorizer trace.
+typedef struct {
+    uint8_t result;
+} authorizer_trace_t;
+
 jb_result_t decode_payload(uint8_t *payload, uint64_t length, refine_payload_t *out) {
     uint8_t *buffer = payload;
     uint64_t remaining = length;
@@ -39,12 +44,43 @@ jb_result_t decode_payload(uint8_t *payload, uint64_t length, refine_payload_t *
     return JB_OK;
 }
 
+jb_result_t decode_authorizer_trace(uint8_t *buff, uint64_t length, authorizer_trace_t *out) {
+    uint8_t *buffer = buff;
+    uint64_t remaining = length;
+
+    assert_ok(jb_codec_decode_u8(&buffer, &remaining, &out->result));
+
+    return JB_OK;
+}
+
 void jb_hook_refine(jb_refine_arguments_t *args) {
     printf("Refine called with core_index: %u, work_item_index: %u, service_id: %u, work_payload_len: %lu\n", args->core_index, args->work_item_index, args->service_id, args->work_payload_len);
 
     puts("=== REFINE ===");
 
-    uint64_t encoded_len = jb_host_fetch(NULL, 0, 0, JB_FETCH_DISCRIMINATOR_NTH_ITEM_PAYLOAD, args->work_item_index, 0);
+    // We check out the authorizer trace.
+    uint64_t encoded_len = jb_host_fetch(NULL, 0, 0, JB_FETCH_DISCRIMINATOR_AUTH_TRACE, 0, 0);
+    if (encoded_len == 0) {
+        fprintf(stderr, "Couldn't fetch.");
+        POLKAVM_TRAP();
+    }
+
+    uint8_t *authorizer_trace_buff = (uint8_t*)malloc(encoded_len);
+    if (!authorizer_trace_buff) {
+        fprintf(stderr, "Couldn't request memory.");
+        POLKAVM_TRAP();
+    }
+
+    uint8_t *original_trace_buff = authorizer_trace_buff;
+
+    assert_host_ok(jb_host_fetch(authorizer_trace_buff, 0, encoded_len, JB_FETCH_DISCRIMINATOR_AUTH_TRACE, 0, 0));
+
+    authorizer_trace_t authorizer_trace;
+    assert_ok(decode_authorizer_trace(authorizer_trace_buff, encoded_len, &authorizer_trace));
+
+    printf("Authorizer trace: %u\n", authorizer_trace.result);
+
+    encoded_len = jb_host_fetch(NULL, 0, 0, JB_FETCH_DISCRIMINATOR_NTH_ITEM_PAYLOAD, args->work_item_index, 0);
     if (encoded_len == 0) {
         fprintf(stderr, "Couldn't fetch.");
         POLKAVM_TRAP();
@@ -138,5 +174,3 @@ void jb_hook_accumulate(jb_accumulate_arguments_t *args) {
     // We free the allocated memory when we're done.
     free(original_buff);
 }
-
-void jb_hook_is_authorized() {}

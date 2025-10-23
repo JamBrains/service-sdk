@@ -20,10 +20,6 @@ void jb_init(char const* const name) {
 	jb_system_check_full();
 }
 
-void _jb_entry_is_authorized() {
-	jb_hook_is_authorized();
-}
-
 void _jb_entry_refine(void *arg_ptr, uint64_t arg_len) {
 	jb_init("Refine");
 
@@ -50,7 +46,6 @@ void _jb_entry_accumulate(void* arg_ptr, uint64_t arg_len) {
 	jb_hook_accumulate(&args);
 }
 
-POLKAVM_EXPORT(void, _jb_entry_is_authorized);
 POLKAVM_EXPORT(void, _jb_entry_refine, void*, uint64_t);
 POLKAVM_EXPORT(void, _jb_entry_accumulate, void*, uint64_t);
 

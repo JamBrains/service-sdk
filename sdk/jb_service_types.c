@@ -348,3 +348,21 @@ jb_result_t jb_accumulate_inputs_decode(uint8_t **in_buff, uint64_t *in_remainin
 
 	return JB_OK;
 }
+
+jb_result_t jb_is_authorized_arguments_decode(uint8_t* in_buff, uint64_t in_remaining, jb_is_authorized_arguments_t* out) {
+	if (!out)
+		return JB_ERR_NO_OUT;
+
+	// Convert our buffers since we dont expect trailing data.
+	uint8_t* in_out_buff = in_buff;
+	uint64_t in_out_remaining = in_remaining;
+
+	jb_result_t res = jb_codec_decode_u16(&in_out_buff, &in_out_remaining, &out->core_index);
+	if (res != JB_OK)
+		return res;
+
+	if (in_out_remaining > 0)
+		return JB_ERR_TRAILING_DATA;
+
+	return JB_OK;
+}

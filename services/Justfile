@@ -41,8 +41,8 @@ compile out_file *in_files:
 		exit 1
 	fi
 
-	# List all files in /opt/sdk
-	FILES=$(ls ../sdk/*.c)
+	# List all files in /opt/sdk except entry_authorizer.c
+	FILES=$(ls ../sdk/*.c | grep -v entry_authorizer.c)
 	# Replace their relative path with an absolute path of /opt/sdk
 	FILES=$(echo $FILES | sed 's|../sdk/|/opt/sdk/|g')
 

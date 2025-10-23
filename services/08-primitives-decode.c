@@ -34,10 +34,6 @@ void jb_hook_refine() {
     run_test();
 }
 
-void jb_hook_is_authorized() {
-    run_test();
-}
-
 void run_test() {
     for (int i = 0; i < 500; i++) {
         jb_result_t r = JB_ERR_UNREACHABLE;

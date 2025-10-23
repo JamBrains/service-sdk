@@ -149,3 +149,10 @@ typedef struct {
 jb_result_t jb_refine_arguments_decode(uint8_t* in_buff, uint64_t in_remaining, jb_refine_arguments_t* out_value);
 
 uint64_t jb_refine_arguments_fmt(jb_refine_arguments_t* args, char* buffer, uint64_t buffer_len);
+
+typedef struct {
+	uint16_t core_index;
+} jb_is_authorized_arguments_t;
+
+/// Decode function for `jb_is_authorized_arguments_t`. Final; does not chain.
+jb_result_t jb_is_authorized_arguments_decode(uint8_t* in_buff, uint64_t in_remaining, jb_is_authorized_arguments_t* out_value);

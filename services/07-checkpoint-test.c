@@ -1,4 +1,5 @@
 #include "jb_service.h"
+#include "jb_service_types.h"
 #include "jb_storage.h"
 
 #include <stdint.h>
@@ -28,5 +29,4 @@ void jb_hook_accumulate(jb_accumulate_arguments_t *args) {
     POLKAVM_TRAP();
 }
 
-void jb_hook_is_authorized() {}
-void jb_hook_refine() {}
+void jb_hook_refine(jb_refine_arguments_t*) {}

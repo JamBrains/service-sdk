@@ -1,4 +1,5 @@
 #include "jb_service.h"
+#include "jb_service_types.h"
 
 #include <stdint.h>
 #include <stdio.h>
@@ -55,5 +56,4 @@ void jb_hook_accumulate(jb_accumulate_arguments_t* args) {
     printf("Remaining gas: %lu\n", jb_service_gas_remaining());
 }
 
-void jb_hook_is_authorized() { /* Not needed for this demo */ }
-void jb_hook_refine() {/* Not needed for this demo */ }
+void jb_hook_refine(jb_refine_arguments_t*) {}
