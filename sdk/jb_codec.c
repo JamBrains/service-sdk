@@ -62,16 +62,23 @@ jb_result_t jb_codec_decode_general_int(uint8_t** buff, uint64_t* remaining, uin
 	if (*remaining < l)
 		return JB_ERR_NO_DATA;
 
+	// Optimized version - unrolls loop and uses direct pointer arithmetic
 	uint64_t v = 0;
-	for (uint64_t i = 0; i < l; i++) {
-		uint64_t number = (uint64_t)**buff;
-		v += number << (8 * i);
-		*buff += 1;
-		*remaining -= 1;
+	uint8_t* ptr = *buff;
+	switch (l) {
+		case 7: v |= ((uint64_t)ptr[6]) << 48;
+		case 6: v |= ((uint64_t)ptr[5]) << 40;
+		case 5: v |= ((uint64_t)ptr[4]) << 32;
+		case 4: v |= ((uint64_t)ptr[3]) << 24;
+		case 3: v |= ((uint64_t)ptr[2]) << 16;
+		case 2: v |= ((uint64_t)ptr[1]) << 8;
+		case 1: v |= (uint64_t)ptr[0];
 	}
+	*buff += l;
+	*remaining -= l;
 
 	uint64_t s = x0 - m;
-	v += s << (8 * l);
+	v |= s << (8 * l);  // Use bitwise OR instead of addition
 
 	*out = v;
 	return JB_OK;
@@ -86,18 +93,14 @@ jb_result_t jb_codec_decode_bool(uint8_t** buff, uint64_t* remaining, bool* out)
 		return JB_ERR_NO_DATA;
 	
 	uint8_t value = **buff;
+	if (value > 1)  // Check invalid value first
+		return JB_ERR_UNDECODABLE;
+		
+	*out = value != 0;  // Convert directly to boolean
 	*buff += 1;
 	*remaining -= 1;
 	
-	if (value == 0) {
-		*out = false;
-		return JB_OK;
-	} else if (value == 1) {
-		*out = true;
-		return JB_OK;
-	}
-	
-	return JB_ERR_UNDECODABLE;
+	return JB_OK;
 }
 
 jb_result_t jb_codec_decode_u8(uint8_t** buff, uint64_t* remaining, uint8_t* out) {
