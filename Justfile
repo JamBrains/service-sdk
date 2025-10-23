@@ -1,7 +1,8 @@
 set quiet
 set dotenv-load
 
-mod examples
+mod services
+mod authorizers
 
 default:
     just --list

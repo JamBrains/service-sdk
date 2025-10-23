@@ -8,7 +8,14 @@ char const* const jb_result_strings[] = {
 	"ERROR_STORAGE_KV_WRITE",
 	"ERR_INSUFFICIENT_BALANCE",
 	"ERR_STORAGE_KV_DELETE",
-	"JB_ERR_NO_KEY"
+	"JB_ERR_NO_KEY",
+	"JB_ERR_NO_DATA",
+	"JB_ERR_NO_OUT",
+	"JB_ERR_UNREACHABLE",
+	"JB_ERR_UNDECODABLE",
+	"JB_ERR_TOO_BIG",
+	"JB_ERR_TRAILING_DATA",
+	"JB_ERR_MALLOC",
 };
 
 char const* jb_result_name(jb_result_t result) {

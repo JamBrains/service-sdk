@@ -3,7 +3,7 @@ set dotenv-path := "../.env"
 
 # Set CC flags
 export CC_FLAGS := "-Wl,--error-limit=0 -flto -O0 -std=gnu23 -I/opt/sdk"
-export POLKATOOL_FLAGS := "--min-stack-size 131072 --dispatch-table '_jb_entry_accumulate,_jb_entry_accumulate,_jb_entry_accumulate,_jb_entry_accumulate'"
+export POLKATOOL_FLAGS := "--min-stack-size 131072 --dispatch-table '_jb_entry_refine,_jb_entry_accumulate'"
 export IMAGE := "ggwpez/service-builder"
 
 default:
@@ -36,8 +36,13 @@ compile out_file *in_files:
 	#!/usr/bin/env bash
 	set -e
 
-	# List all files in /opt/sdk
-	FILES=$(ls ../sdk/*.c)
+	if [ -z "$DOCKER" ]; then
+		echo "DOCKER environment variable is not set. Please run either 'just docker' or 'just podman' in the root folder first."
+		exit 1
+	fi
+
+	# List all files in /opt/sdk except entry_authorizer.c
+	FILES=$(ls ../sdk/*.c | grep -v entry_authorizer.c)
 	# Replace their relative path with an absolute path of /opt/sdk
 	FILES=$(echo $FILES | sed 's|../sdk/|/opt/sdk/|g')
 
