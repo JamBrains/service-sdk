@@ -26,11 +26,28 @@ typedef struct {
     uint8_t result;
 } authorizer_trace_t;
 
-// Auto-generate decoder for refine_payload_t with dynamic array
-DECLARE_DECODER_WITH_ARRAY(refine_payload_t, count, numbers)
+// Auto-generate decoder.
+AUTO_DECLARE_DECODER(authorizer_trace_t, result)
 
-// Auto-generate decoder for authorizer_trace_t
-DECLARE_DECODER_1_FIELD(authorizer_trace_t, u8, result)
+// Need to manually decode the payload since AUTO_DECLARE_DECODER can't handle dynamic arrays yet.
+jb_result_t decode_payload(uint8_t **payload, uint64_t length, refine_payload_t *out) {
+    uint8_t *buffer = *payload;
+    uint64_t remaining = length;
+
+    uint64_t count;
+    assert_ok(jb_codec_decode_general_int(&buffer, &remaining, &count));
+    out->count = count;
+
+    uint64_t *numbers = malloc(sizeof(uint64_t) * count);
+    for (int i = 0; i < count; i++) {
+        uint64_t number;
+        assert_ok(jb_codec_decode_u64(&buffer, &remaining, &number));
+        numbers[i] = number;
+    }
+    out->numbers = numbers;
+
+    return JB_OK;
+}
 
 void jb_hook_refine(jb_refine_arguments_t *args) {
     printf("Refine called with core_index: %u, work_item_index: %u, service_id: %u, work_payload_len: %lu\n", args->core_index, args->work_item_index, args->service_id, args->work_payload_len);
@@ -56,7 +73,6 @@ void jb_hook_refine(jb_refine_arguments_t *args) {
 
     authorizer_trace_t authorizer_trace;
     assert_ok(decode_authorizer_trace_t(&authorizer_trace_buff, &encoded_len, &authorizer_trace));
-
     printf("Authorizer trace: %u\n", authorizer_trace.result);
 
     encoded_len = jb_host_fetch(NULL, 0, 0, JB_FETCH_DISCRIMINATOR_NTH_ITEM_PAYLOAD, args->work_item_index, 0);
@@ -77,7 +93,7 @@ void jb_hook_refine(jb_refine_arguments_t *args) {
     assert_host_ok(jb_host_fetch(buff, 0, encoded_len, JB_FETCH_DISCRIMINATOR_NTH_ITEM_PAYLOAD, args->work_item_index, 0));
 
     refine_payload_t payload;
-    assert_ok(decode_refine_payload_t(&buff, &encoded_len, &payload));
+    assert_ok(decode_payload(&buff, encoded_len, &payload));
 
     // We do the actual sum.
     uint64_t sum = 0;

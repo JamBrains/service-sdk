@@ -2,9 +2,9 @@
  * Automatic codec derivation macros for JAM Service SDK
  * 
  * Usage:
- *   DECLARE_DECODER(struct_name, field1_type, field1_name, field2_type, field2_name, ...)
- *   
- * For arrays: DECLARE_DECODER_WITH_ARRAY(struct_name, count_field, array_field, element_type)
+ *   AUTO_DECLARE_DECODER(struct_name, field1_type, field1_name, field2_type, field2_name, ...)
+ *
+ * TODO: Currently can't handle dynamic arrays or nested custom types.
  */
 
 #pragma once
@@ -12,75 +12,66 @@
 #include "jb_codec.h"
 #include "jb_result.h"
 
-// Simple macro for single field types
-#define DECODE_u8(buffer, remaining, field) \
+#include <stdbool.h>
+
+// Macro to automatically decode a field by detecting its type
+#define AUTO_DECODE_FIELD(struct_type, field_name) \
     do { \
-        jb_result_t result = jb_codec_decode_u8(buffer, remaining, field); \
+        jb_result_t result = _Generic((((struct_type*)0)->field_name), \
+            uint8_t: jb_codec_decode_u8, \
+            uint16_t: jb_codec_decode_u16, \
+            uint32_t: jb_codec_decode_u32, \
+            uint64_t: jb_codec_decode_u64, \
+            bool: jb_codec_decode_bool, \
+            int: jb_codec_decode_u32, \
+            default: jb_codec_decode_u64)(buffer, remaining, &out->field_name); \
         if (result != JB_OK) return result; \
-    } while(0)
+    } while(0);
 
-#define DECODE_u16(buffer, remaining, field) \
-    do { \
-        jb_result_t result = jb_codec_decode_u16(buffer, remaining, field); \
-        if (result != JB_OK) return result; \
-    } while(0)
-
-#define DECODE_u32(buffer, remaining, field) \
-    do { \
-        jb_result_t result = jb_codec_decode_u32(buffer, remaining, field); \
-        if (result != JB_OK) return result; \
-    } while(0)
-
-#define DECODE_u64(buffer, remaining, field) \
-    do { \
-        jb_result_t result = jb_codec_decode_u64(buffer, remaining, field); \
-        if (result != JB_OK) return result; \
-    } while(0)
-
-#define DECODE_bool(buffer, remaining, field) \
-    do { \
-        jb_result_t result = jb_codec_decode_bool(buffer, remaining, field); \
-        if (result != JB_OK) return result; \
-    } while(0)
-
-#define DECODE_general_int(buffer, remaining, field) \
-    do { \
-        jb_result_t result = jb_codec_decode_general_int(buffer, remaining, field); \
-        if (result != JB_OK) return result; \
-    } while(0)
-
-// Macro for dynamic arrays
-#define DECODE_ARRAY_u64(buffer, remaining, array_field, count) \
-    do { \
-        array_field = malloc(sizeof(uint64_t) * count); \
-        if (!array_field) return JB_ERR_MALLOC; \
-        for (uint64_t i = 0; i < count; i++) { \
-            jb_result_t result = jb_codec_decode_u64(buffer, remaining, &array_field[i]); \
-            if (result != JB_OK) { \
-                free(array_field); \
-                return result; \
-            } \
-        } \
-    } while(0)
-
-// Specific decoders for common patterns
-#define DECLARE_DECODER_1_FIELD(struct_name, type1, field1) \
-    jb_result_t decode_##struct_name(uint8_t** buffer, uint64_t* remaining, struct_name* out) { \
-        DECODE_##type1(buffer, remaining, &out->field1); \
+// Fully automatic decoder that derives everything from struct definition
+#define AUTO_DECLARE_DECODER_1(struct_type, f1) \
+    jb_result_t decode_##struct_type(uint8_t** buffer, uint64_t* remaining, struct_type* out) { \
+        AUTO_DECODE_FIELD(struct_type, f1) \
         return JB_OK; \
     }
 
-#define DECLARE_DECODER_2_FIELDS(struct_name, type1, field1, type2, field2) \
-    jb_result_t decode_##struct_name(uint8_t** buffer, uint64_t* remaining, struct_name* out) { \
-        DECODE_##type1(buffer, remaining, &out->field1); \
-        DECODE_##type2(buffer, remaining, &out->field2); \
+#define AUTO_DECLARE_DECODER_2(struct_type, f1, f2) \
+    jb_result_t decode_##struct_type(uint8_t** buffer, uint64_t* remaining, struct_type* out) { \
+        AUTO_DECODE_FIELD(struct_type, f1) \
+        AUTO_DECODE_FIELD(struct_type, f2) \
         return JB_OK; \
     }
 
-// Special decoder for struct with count + array
-#define DECLARE_DECODER_WITH_ARRAY(struct_name, count_field, array_field) \
-    jb_result_t decode_##struct_name(uint8_t** buffer, uint64_t* remaining, struct_name* out) { \
-        DECODE_general_int(buffer, remaining, &out->count_field); \
-        DECODE_ARRAY_u64(buffer, remaining, out->array_field, out->count_field); \
+#define AUTO_DECLARE_DECODER_3(struct_type, f1, f2, f3) \
+    jb_result_t decode_##struct_type(uint8_t** buffer, uint64_t* remaining, struct_type* out) { \
+        AUTO_DECODE_FIELD(struct_type, f1) \
+        AUTO_DECODE_FIELD(struct_type, f2) \
+        AUTO_DECODE_FIELD(struct_type, f3) \
         return JB_OK; \
     }
+
+#define AUTO_DECLARE_DECODER_4(struct_type, f1, f2, f3, f4) \
+    jb_result_t decode_##struct_type(uint8_t** buffer, uint64_t* remaining, struct_type* out) { \
+        AUTO_DECODE_FIELD(struct_type, f1) \
+        AUTO_DECODE_FIELD(struct_type, f2) \
+        AUTO_DECODE_FIELD(struct_type, f3) \
+        AUTO_DECODE_FIELD(struct_type, f4) \
+        return JB_OK; \
+    }
+
+#define AUTO_DECLARE_DECODER_5(struct_type, f1, f2, f3, f4, f5) \
+    jb_result_t decode_##struct_type(uint8_t** buffer, uint64_t* remaining, struct_type* out) { \
+        AUTO_DECODE_FIELD(struct_type, f1) \
+        AUTO_DECODE_FIELD(struct_type, f2) \
+        AUTO_DECODE_FIELD(struct_type, f3) \
+        AUTO_DECODE_FIELD(struct_type, f4) \
+        AUTO_DECODE_FIELD(struct_type, f5) \
+        return JB_OK; \
+    }
+
+// Overloaded macro for automatic decoder generation
+#define GET_AUTO_DECODER_MACRO(_1, _2, _3, _4, _5, _6, NAME, ...) NAME
+
+#define AUTO_DECLARE_DECODER(...) GET_AUTO_DECODER_MACRO(__VA_ARGS__, \
+    AUTO_DECLARE_DECODER_5, AUTO_DECLARE_DECODER_4, AUTO_DECLARE_DECODER_3, \
+    AUTO_DECLARE_DECODER_2, AUTO_DECLARE_DECODER_1)(__VA_ARGS__)
