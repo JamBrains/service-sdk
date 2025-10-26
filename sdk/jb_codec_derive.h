@@ -53,4 +53,4 @@
 /// @param ... The fields of the struct to decode. Must be in the form JB_CODEC_FIELD(type, name)
 /// @details Available FIELD macros are: JB_CODEC_FIELD(type, name), JB_CODEC_FIELD_LIST(type, name)
 /// @example JB_GENERATE_DECODER(rgb_color_t, JB_CODEC_FIELD(u8, r), JB_CODEC_FIELD(u8, g), JB_CODEC_FIELD(u8, b))
-#define JB_GENERATE_DECODER(...) __JB_GET_MACRO(__VA_ARGS__, __JB_GENERATE_DECODER_3, __JB_GENERATE_DECODER_2)(__VA_ARGS__)
+#define JB_GENERATE_DECODER(NAME, ...) __JB_GET_MACRO(NAME, __VA_ARGS__, __JB_GENERATE_DECODER_3, __JB_GENERATE_DECODER_2)(NAME, __VA_ARGS__)
