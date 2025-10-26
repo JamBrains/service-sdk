@@ -1,5 +1,7 @@
 #include "jb_codec.h"
+
 #include <string.h>
+#include <stdarg.h>
 
 jb_result_t jb_codec_decode_general_int(uint8_t** buff, uint64_t* remaining, uint64_t* out) {
 	if (!out)

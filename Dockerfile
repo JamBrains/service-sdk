@@ -24,7 +24,6 @@ ENV STRIP=llvm-strip-20
 ADD thirdparty/polkaports /opt/thirdparty/polkaports
 WORKDIR /opt/thirdparty/polkaports
 
-#RUN git submodule update --init --recursive
 RUN ./setup.sh
 
 # Set up environment for integrity checks
@@ -74,7 +73,7 @@ WORKDIR /app
 COPY sdk /opt/sdk
 
 # Copy examples directory for generate-examples command
-COPY examples /opt/examples
+COPY services /opt/examples
 
 # Install the single-file compilation script
 COPY single-file /usr/local/bin/single-file

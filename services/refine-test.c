@@ -1,5 +1,6 @@
 #include "host_functions.h"
 #include "jb_codec.h"
+#include "jb_codec_derive.h"
 #include "jb_service.h"
 
 #include <stdio.h>
@@ -25,8 +26,12 @@ typedef struct {
     uint8_t result;
 } authorizer_trace_t;
 
-jb_result_t decode_payload(uint8_t *payload, uint64_t length, refine_payload_t *out) {
-    uint8_t *buffer = payload;
+// Auto-generate decoder.
+JB_GENERATE_DECODER(authorizer_trace_t, JB_CODEC_FIELD(u8, result))
+
+// Need to manually decode the payload since AUTO_DECLARE_DECODER can't handle dynamic arrays yet.
+jb_result_t decode_payload(uint8_t **payload, uint64_t length, refine_payload_t *out) {
+    uint8_t *buffer = *payload;
     uint64_t remaining = length;
 
     uint64_t count;
@@ -40,15 +45,6 @@ jb_result_t decode_payload(uint8_t *payload, uint64_t length, refine_payload_t *
         numbers[i] = number;
     }
     out->numbers = numbers;
-
-    return JB_OK;
-}
-
-jb_result_t decode_authorizer_trace(uint8_t *buff, uint64_t length, authorizer_trace_t *out) {
-    uint8_t *buffer = buff;
-    uint64_t remaining = length;
-
-    assert_ok(jb_codec_decode_u8(&buffer, &remaining, &out->result));
 
     return JB_OK;
 }
@@ -76,8 +72,7 @@ void jb_hook_refine(jb_refine_arguments_t *args) {
     assert_host_ok(jb_host_fetch(authorizer_trace_buff, 0, encoded_len, JB_FETCH_DISCRIMINATOR_AUTH_TRACE, 0, 0));
 
     authorizer_trace_t authorizer_trace;
-    assert_ok(decode_authorizer_trace(authorizer_trace_buff, encoded_len, &authorizer_trace));
-
+    assert_ok(jb_codec_decode_authorizer_trace_t(&authorizer_trace_buff, &encoded_len, &authorizer_trace));
     printf("Authorizer trace: %u\n", authorizer_trace.result);
 
     encoded_len = jb_host_fetch(NULL, 0, 0, JB_FETCH_DISCRIMINATOR_NTH_ITEM_PAYLOAD, args->work_item_index, 0);
@@ -98,7 +93,7 @@ void jb_hook_refine(jb_refine_arguments_t *args) {
     assert_host_ok(jb_host_fetch(buff, 0, encoded_len, JB_FETCH_DISCRIMINATOR_NTH_ITEM_PAYLOAD, args->work_item_index, 0));
 
     refine_payload_t payload;
-    assert_ok(decode_payload(buff, encoded_len, &payload));
+    assert_ok(decode_payload(&buff, encoded_len, &payload));
 
     // We do the actual sum.
     uint64_t sum = 0;

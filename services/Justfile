@@ -2,7 +2,7 @@ set dotenv-load := true
 set dotenv-path := "../.env"
 
 # Set CC flags
-export CC_FLAGS := "-Wl,--error-limit=0 -flto -O0 -std=gnu23 -I/opt/sdk"
+export CC_FLAGS := "-Wl,--error-limit=0 -flto -Os -std=gnu23 -I/opt/sdk"
 export POLKATOOL_FLAGS := "--min-stack-size 131072 --dispatch-table '_jb_entry_refine,_jb_entry_accumulate'"
 export IMAGE := "ggwpez/service-builder"
 
