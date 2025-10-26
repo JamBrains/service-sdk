@@ -4,7 +4,6 @@
  * Usage:
  *   JB_GENERATE_DECODER(struct_name, JB_CODEC_FIELD(type, name), JB_CODEC_FIELD(type, name), ...)
  *
- * TODO: Currently can't handle dynamic arrays.
  */
 
 #pragma once
