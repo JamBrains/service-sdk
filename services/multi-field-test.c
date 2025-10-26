@@ -36,6 +36,15 @@ JB_GENERATE_DECODER(nested_data_t,
     JB_CODEC_FIELD(u8, tiny)
 )
 
+typedef struct {
+    uint8_t *data;
+    uint64_t data_len;
+} list_data_t;
+
+JB_GENERATE_DECODER(list_data_t,
+    JB_CODEC_FIELD_LIST(u8, data)
+)
+
 // Test function to verify decoding works
 static void test_codec_derive() {
     puts("Testing codec derive macros...");
@@ -87,6 +96,21 @@ static void test_codec_derive() {
     jb_assert_equal(decoded_nested.simple.big, 4294967297, "big value mismatch");
     jb_assert_equal(decoded_nested.simple.boolean, true, "boolean value mismatch");
     jb_assert_equal(decoded_nested.tiny, 45, "tiny value mismatch");
+
+    uint8_t list_data[] = {
+        0x03, // list length: 3
+        0x01, 0x02, 0x03, // list data: 1, 2, 3
+    };
+
+    buffer = list_data;
+    remaining = sizeof(list_data);
+    list_data_t decoded_list;
+    result = jb_codec_decode_list_data_t(&buffer, &remaining, &decoded_list);
+    jb_assert_ok(result, "Failed to decode list data");
+
+    jb_assert_equal(decoded_list.data[0], 1, "list data value mismatch");
+    jb_assert_equal(decoded_list.data[1], 2, "list data value mismatch");
+    jb_assert_equal(decoded_list.data[2], 3, "list data value mismatch");
 }
 
 void jb_hook_accumulate(jb_accumulate_arguments_t* args) {
