@@ -1,5 +1,5 @@
 #include "host_functions_untyped.h"
-#include "jb_asset.h"
+#include "jb_assert.h"
 #include "jb_system_check.h"
 #include "jb_service_types.h"
 

@@ -14,64 +14,25 @@
 
 #include <stdbool.h>
 
-// Macro to automatically decode a field by detecting its type
-#define AUTO_DECODE_FIELD(struct_type, field_name) \
+#define JB_CODEC_FIELD(type, name) \
     do { \
-        jb_result_t result = _Generic((((struct_type*)0)->field_name), \
-            uint8_t: jb_codec_decode_u8, \
-            uint16_t: jb_codec_decode_u16, \
-            uint32_t: jb_codec_decode_u32, \
-            uint64_t: jb_codec_decode_u64, \
-            bool: jb_codec_decode_bool, \
-            int: jb_codec_decode_u32, \
-            default: jb_codec_decode_u64)(buffer, remaining, &out->field_name); \
+        jb_result_t result = jb_codec_decode_##type(buffer, remaining, &out->name); \
         if (result != JB_OK) return result; \
     } while(0);
 
-// Fully automatic decoder that derives everything from struct definition
-#define AUTO_DECLARE_DECODER_1(struct_type, f1) \
-    jb_result_t decode_##struct_type(uint8_t** buffer, uint64_t* remaining, struct_type* out) { \
-        AUTO_DECODE_FIELD(struct_type, f1) \
+#define __JB_GENERATE_DECODER_3(NAME, PREFIX, ...) \
+    jb_result_t PREFIX##NAME(uint8_t** buffer, uint64_t* remaining, NAME* out) { \
+        __VA_ARGS__ \
         return JB_OK; \
     }
 
-#define AUTO_DECLARE_DECODER_2(struct_type, f1, f2) \
-    jb_result_t decode_##struct_type(uint8_t** buffer, uint64_t* remaining, struct_type* out) { \
-        AUTO_DECODE_FIELD(struct_type, f1) \
-        AUTO_DECODE_FIELD(struct_type, f2) \
-        return JB_OK; \
-    }
+#define __JB_GENERATE_DECODER_2(NAME, ...) \
+    __JB_GENERATE_DECODER_3(NAME, jb_codec_decode_, __VA_ARGS__)
 
-#define AUTO_DECLARE_DECODER_3(struct_type, f1, f2, f3) \
-    jb_result_t decode_##struct_type(uint8_t** buffer, uint64_t* remaining, struct_type* out) { \
-        AUTO_DECODE_FIELD(struct_type, f1) \
-        AUTO_DECODE_FIELD(struct_type, f2) \
-        AUTO_DECODE_FIELD(struct_type, f3) \
-        return JB_OK; \
-    }
+#define __JB_GET_MACRO(_1, _2, _3, NAME, ...) NAME
 
-#define AUTO_DECLARE_DECODER_4(struct_type, f1, f2, f3, f4) \
-    jb_result_t decode_##struct_type(uint8_t** buffer, uint64_t* remaining, struct_type* out) { \
-        AUTO_DECODE_FIELD(struct_type, f1) \
-        AUTO_DECODE_FIELD(struct_type, f2) \
-        AUTO_DECODE_FIELD(struct_type, f3) \
-        AUTO_DECODE_FIELD(struct_type, f4) \
-        return JB_OK; \
-    }
-
-#define AUTO_DECLARE_DECODER_5(struct_type, f1, f2, f3, f4, f5) \
-    jb_result_t decode_##struct_type(uint8_t** buffer, uint64_t* remaining, struct_type* out) { \
-        AUTO_DECODE_FIELD(struct_type, f1) \
-        AUTO_DECODE_FIELD(struct_type, f2) \
-        AUTO_DECODE_FIELD(struct_type, f3) \
-        AUTO_DECODE_FIELD(struct_type, f4) \
-        AUTO_DECODE_FIELD(struct_type, f5) \
-        return JB_OK; \
-    }
-
-// Overloaded macro for automatic decoder generation
-#define GET_AUTO_DECODER_MACRO(_1, _2, _3, _4, _5, _6, NAME, ...) NAME
-
-#define AUTO_DECLARE_DECODER(...) GET_AUTO_DECODER_MACRO(__VA_ARGS__, \
-    AUTO_DECLARE_DECODER_5, AUTO_DECLARE_DECODER_4, AUTO_DECLARE_DECODER_3, \
-    AUTO_DECLARE_DECODER_2, AUTO_DECLARE_DECODER_1)(__VA_ARGS__)
+/// @brief Generate a decoder for a given struct. Check `multi-field-test.c` for an example.
+/// @param NAME The name of the struct to generate a decoder for.
+/// @param ... The fields of the struct to decode. Must be in the form JB_CODEC_FIELD(type, name).
+/// @example JB_GENERATE_DECODER(rgb_color_t, JB_CODEC_FIELD(u8, r), JB_CODEC_FIELD(u8, g), JB_CODEC_FIELD(u8, b))
+#define JB_GENERATE_DECODER(...) __JB_GET_MACRO(__VA_ARGS__, __JB_GENERATE_DECODER_3, __JB_GENERATE_DECODER_2)(__VA_ARGS__)

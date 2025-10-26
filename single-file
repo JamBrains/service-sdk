@@ -51,7 +51,7 @@ if [ -z "${POLKATOOL_FLAGS:-}" ]; then
 fi
 
 # Collect all SDK C files
-SDK_FILES=$(ls /opt/sdk/*.c 2>/dev/null || echo "")
+SDK_FILES=$(ls /opt/sdk/*.c | grep -v entry_authorizer.c)
 
 # Create a temporary directory for our work
 TEMP_DIR=$(mktemp -d)

@@ -1,5 +1,6 @@
 #include "jb_service.h"
 #include "jb_codec_derive.h"
+#include "jb_assert.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,9 +15,26 @@ typedef struct {
     bool boolean;
 } simple_data_t;
 
-// Use AUTO_DECLARE_DECODER for automatic type detection and decoder generation.
-// TODO: Make it work on array fields as well.
-AUTO_DECLARE_DECODER(simple_data_t, smaller, small, normal, big, boolean);
+JB_GENERATE_DECODER(simple_data_t,
+    JB_CODEC_FIELD(u8, smaller)
+    JB_CODEC_FIELD(u16, small)
+    JB_CODEC_FIELD(u32, normal)
+    JB_CODEC_FIELD(u64, big)
+    JB_CODEC_FIELD(bool, boolean)
+)
+
+// Struct that contains the simple struct and some other fields.
+typedef struct {
+    uint16_t data;
+    simple_data_t simple;
+    uint8_t tiny;
+} nested_data_t;
+
+JB_GENERATE_DECODER(nested_data_t,
+    JB_CODEC_FIELD(u16, data)
+    JB_CODEC_FIELD(simple_data_t, simple)
+    JB_CODEC_FIELD(u8, tiny)
+)
 
 // Test function to verify decoding works
 static void test_codec_derive() {
@@ -30,26 +48,45 @@ static void test_codec_derive() {
         0x01, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, // big: 4294967297 (little endian)
         0x01 // boolean: true
     };
-    
+
     uint8_t* buffer = simple_data;
     uint64_t remaining = sizeof(simple_data);
     simple_data_t decoded_simple;
     
-    jb_result_t result = decode_simple_data_t(&buffer, &remaining, &decoded_simple);
-    if (result == JB_OK) {
-        puts("Simple struct decoded successfully");
-    } else {
-        fprintf(stderr, "Simple struct decode failed");
-    }
+    jb_result_t result = jb_codec_decode_simple_data_t(&buffer, &remaining, &decoded_simple);
+    jb_assert_ok(result, "Failed to decode simple data");
 
-    printf(
-        "Decoded value: smaller=%u, small=%u, normal=%u, big=%lu, boolean=%u\n",
-        decoded_simple.smaller,
-        decoded_simple.small,
-        decoded_simple.normal,
-        decoded_simple.big,
-        decoded_simple.boolean
-    );
+    jb_assert_equal(decoded_simple.smaller, 42, "smaller value mismatch");
+    jb_assert_equal(decoded_simple.small, 1337, "small value mismatch");
+    jb_assert_equal(decoded_simple.normal, 421337, "normal value mismatch");
+    jb_assert_equal(decoded_simple.big, 4294967297, "big value mismatch");
+    jb_assert_equal(decoded_simple.boolean, true, "boolean value mismatch");
+
+    uint8_t nested_data[] = {
+        0x38, 0x05, // data: 1336 
+        // small struct
+        0x2A, // smaller: 42
+        0x39, 0x05, // small: 1337 (little endian)
+        0xD9, 0x6D, 0x06, 0x00, // normal: 421337 (little endian)
+        0x01, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, // big: 4294967297 (little endian)
+        0x01, // boolean: true
+        // end of small struct
+        45, // tiny: 45
+    };
+
+    buffer = nested_data;
+    remaining = sizeof(nested_data);
+    nested_data_t decoded_nested;
+    result = jb_codec_decode_nested_data_t(&buffer, &remaining, &decoded_nested);
+    jb_assert_ok(result, "Failed to decode nested data");
+
+    jb_assert_equal(decoded_nested.data, 1336, "data value mismatch");
+    jb_assert_equal(decoded_nested.simple.smaller, 42, "smaller value mismatch");
+    jb_assert_equal(decoded_nested.simple.small, 1337, "small value mismatch");
+    jb_assert_equal(decoded_nested.simple.normal, 421337, "normal value mismatch");
+    jb_assert_equal(decoded_nested.simple.big, 4294967297, "big value mismatch");
+    jb_assert_equal(decoded_nested.simple.boolean, true, "boolean value mismatch");
+    jb_assert_equal(decoded_nested.tiny, 45, "tiny value mismatch");
 }
 
 void jb_hook_accumulate(jb_accumulate_arguments_t* args) {

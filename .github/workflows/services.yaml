@@ -1,0 +1,53 @@
+name: Run Services
+
+on:
+    push:
+        branches: [ master ]
+    pull_request:
+    workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  REGISTRY: ghcr.io
+  SDK_IMAGE: ghcr.io/jambrains/service-sdk:latest
+  GM_IMAGE: ghcr.io/jambrains/graymatter/gm:latest
+  GM_LOG: info
+  GM_SERVICE_LOG: 5
+
+jobs:
+  docker:
+    runs-on: ubuntu-24.04
+
+    permissions:
+      contents: read
+
+    steps:
+      -
+        name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      -
+        name: Checkout code
+        uses: actions/checkout@v4
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      -
+        name: Compile Services
+        run: |
+          for SERVICE in services/*.c; do
+            docker run -v $(pwd):/app --rm ${{ env.SDK_IMAGE }} single-file $SERVICE
+            stat ${SERVICE%.c}.jam
+          done
+      -
+        name: RUN Services
+        run: |
+          for SERVICE in services/*.c; do
+            docker run -e GM_LOG=info -e GM_SERVICE_LOG=5 --rm -v$(pwd):/jam ${{ env.GM_IMAGE }} run-service --service /jam/${SERVICE%.c}.jam --accumulate
+          done

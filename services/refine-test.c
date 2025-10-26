@@ -27,7 +27,7 @@ typedef struct {
 } authorizer_trace_t;
 
 // Auto-generate decoder.
-AUTO_DECLARE_DECODER(authorizer_trace_t, result)
+JB_GENERATE_DECODER(authorizer_trace_t, JB_CODEC_FIELD(u8, result))
 
 // Need to manually decode the payload since AUTO_DECLARE_DECODER can't handle dynamic arrays yet.
 jb_result_t decode_payload(uint8_t **payload, uint64_t length, refine_payload_t *out) {
@@ -72,7 +72,7 @@ void jb_hook_refine(jb_refine_arguments_t *args) {
     assert_host_ok(jb_host_fetch(authorizer_trace_buff, 0, encoded_len, JB_FETCH_DISCRIMINATOR_AUTH_TRACE, 0, 0));
 
     authorizer_trace_t authorizer_trace;
-    assert_ok(decode_authorizer_trace_t(&authorizer_trace_buff, &encoded_len, &authorizer_trace));
+    assert_ok(jb_codec_decode_authorizer_trace_t(&authorizer_trace_buff, &encoded_len, &authorizer_trace));
     printf("Authorizer trace: %u\n", authorizer_trace.result);
 
     encoded_len = jb_host_fetch(NULL, 0, 0, JB_FETCH_DISCRIMINATOR_NTH_ITEM_PAYLOAD, args->work_item_index, 0);
