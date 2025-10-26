@@ -50,6 +50,6 @@ jobs:
       -
         name: RUN Services
         run: |
-          for SERVICE in services/*.c; do
-            docker run -e GM_LOG=info -e GM_SERVICE_LOG=5 --rm -v$(pwd):/jam ${{ env.GM_IMAGE }} run-service --service /jam/${SERVICE%.c}.jam --accumulate
+          for SERVICE in services/output/*.jam; do
+            docker run -e GM_LOG=info -e GM_SERVICE_LOG=5 --rm -v$(pwd):/jam ${{ env.GM_IMAGE }} run-service --service /jam/${SERVICE} --accumulate
           done
