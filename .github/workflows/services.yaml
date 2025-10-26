@@ -41,10 +41,9 @@ jobs:
       -
         name: Compile Services
         run: |
-          for SERVICE in services/*.c; do
-            docker run -v $(pwd):/app --rm ${{ env.SDK_IMAGE }} single-file $SERVICE
-            stat ${SERVICE%.c}.jam
-          done
+          just docker
+          cd services
+          just build
       -
         name: RUN Services
         run: |
