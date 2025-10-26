@@ -45,6 +45,16 @@ JB_GENERATE_DECODER(list_data_t,
     JB_CODEC_FIELD_LIST(u8, data)
 )
 
+// struct with a list of lists
+typedef struct {
+    list_data_t *lists;
+    uint64_t lists_len;
+} list_of_lists_data_t;
+
+JB_GENERATE_DECODER(list_of_lists_data_t,
+    JB_CODEC_FIELD_LIST(list_data_t, lists)
+)
+
 // Test function to verify decoding works
 static void test_codec_derive() {
     puts("Testing codec derive macros...");
@@ -108,9 +118,32 @@ static void test_codec_derive() {
     result = jb_codec_decode_list_data_t(&buffer, &remaining, &decoded_list);
     jb_assert_ok(result, "Failed to decode list data");
 
+    jb_assert_equal(decoded_list.data_len, 3, "list data length mismatch");
     jb_assert_equal(decoded_list.data[0], 1, "list data value mismatch");
     jb_assert_equal(decoded_list.data[1], 2, "list data value mismatch");
     jb_assert_equal(decoded_list.data[2], 3, "list data value mismatch");
+
+    uint8_t list_of_lists_data[] = {
+        0x02, // list length: 2
+        0x03, // list length: 3
+        0x01, 0x02, 0x03, // list data: 1, 2, 3
+        0x03, // list length: 3
+        0x04, 0x05, 0x06, // list data: 4, 5, 6
+    };
+
+    buffer = list_of_lists_data;
+    remaining = sizeof(list_of_lists_data);
+    list_of_lists_data_t decoded_list_of_lists;
+    result = jb_codec_decode_list_of_lists_data_t(&buffer, &remaining, &decoded_list_of_lists);
+    jb_assert_ok(result, "Failed to decode list of lists data");
+
+    jb_assert_equal(decoded_list_of_lists.lists_len, 2, "list of lists length mismatch");
+    jb_assert_equal(decoded_list_of_lists.lists[0].data[0], 1, "list data value mismatch");
+    jb_assert_equal(decoded_list_of_lists.lists[0].data[1], 2, "list data value mismatch");
+    jb_assert_equal(decoded_list_of_lists.lists[0].data[2], 3, "list data value mismatch");
+    jb_assert_equal(decoded_list_of_lists.lists[1].data_len, 3, "list data length mismatch");
+    jb_assert_equal(decoded_list_of_lists.lists[1].data[0], 4, "list data value mismatch");
+    jb_assert_equal(decoded_list_of_lists.lists[1].data[1], 5, "list data value mismatch");
 }
 
 void jb_hook_accumulate(jb_accumulate_arguments_t* args) {
