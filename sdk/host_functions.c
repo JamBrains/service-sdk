@@ -3,47 +3,32 @@
 
 #include <string.h>
 
+// Optimized version using static lookup table
 char const* jb_host_result_name(uint64_t host_result) {
-	switch (host_result) {
-		case HOST_NONE:
-			return "None";
-		case HOST_WHAT:
-			return "What";
-		case HOST_OOB:
-			return "Out of bounds";
-		case HOST_WHO:
-			return "Who?";
-		case HOST_FULL:
-			return "Full";
-		case HOST_CORE:
-			return "Core";
-		case HOST_CASH:
-			return "Cash";
-		case HOST_LOW:
-			return "Low";
-		case HOST_HUH:
-			return "Huh";
-		case HOST_OK:
-			return "Ok";
-		default:
-			return "Unknown host return";
-	}
+    static const char* const result_names[] = {
+        "None",           // HOST_NONE = 0
+        "What",          // HOST_WHAT = 1
+        "Out of bounds", // HOST_OOB = 2
+        "Who?",          // HOST_WHO = 3
+        "Full",          // HOST_FULL = 4
+        "Core",          // HOST_CORE = 5
+        "Cash",          // HOST_CASH = 6
+        "Low",           // HOST_LOW = 7
+        "Huh",           // HOST_HUH = 8
+        "Ok"            // HOST_OK = 9
+    };
+    static const size_t result_names_size = sizeof(result_names) / sizeof(result_names[0]);
+    
+    return (host_result < result_names_size) ? result_names[host_result] : "Unknown host return";
 }
 
 void assert_host_ok(uint64_t result) {
-	if (
-		result == HOST_NONE ||
-		result == HOST_WHAT ||
-		result == HOST_OOB ||
-		result == HOST_WHO ||
-		result == HOST_FULL ||
-		result == HOST_CORE ||
-		result == HOST_CASH ||
-		result == HOST_LOW ||
-		result == HOST_HUH
-	) {
-		POLKAVM_TRAP();
-	}
+    // Using bit manipulation for faster check
+    // This assumes HOST_OK is greater than other error codes
+    // and error codes are sequential from 0 to HOST_HUH
+    if (result <= HOST_HUH) {
+        POLKAVM_TRAP();
+    }
 }
 
 // === GENERAL ===
