@@ -1,4 +1,4 @@
-# PBA Demo
+# JAM Service SDK in C23
 
 ## Building the Service
 
@@ -13,9 +13,9 @@ cargo install just
 just docker # or podman
 ```
 
-You can now compile the PBA demo in the `examples` folder with the `just examples` command:
+You can now compile the example services in the `services` command:
 ```bash
-just examples build
+just services build
 ```
 
 You should see the following output:
@@ -24,41 +24,16 @@ You should see the following output:
 Linked output/01-hello-world.jam
 Linked output/02-pba-demo.jam
 Linked output/03-storage-test.jam
-Linked output/04-bless-demo.jam
+...
+Linked output/multi-field-test.jam
+Linked output/refine-test.jam
+Linked output/transfer-test.jam
 ```
 
-There is also a `watch` command that will re-build when you change the example code: `just examples watch`.
-
-This will result in a **`02-pba-demo.jam`** file in the `output` folder. This is the final service blob according to the Gray Paper.
+This will result in a **`02-pba-demo.jam`** file in the `services/output/` folder. This is the final service blob according to the Gray Paper.
 
 ### Non-Apple Silicon
 
-You can build the Docker image also on Debian or other systems with `podman build -t service-builder .` (or `docker build -t service-builder .`) and then change the expected image name in `examples/Justfile` to `service-builder`.
+You can build the Docker image also on Debian or other systems with `podman build -t service-builder .` (or `docker build -t service-builder .`) and then change the expected image name in `services/Justfile` to `service-builder`.
 
-If you do not want to use Docker at all, you can also build the dependencies manually like described in [here](https://github.com/JamBrains/polkaports). You then still have to modify the `compile` step of the [Justfile](examples/Justfile) to use it directly.
-
-## Run the Service
-
-You need checkout branch `oty-pvm-pba-demo` and run the test tagged with `only` in the file `packages/gm-core/test/jam/pvm/blob_test.exs`. Concretely:
-
-```bash
-cd graymatter
-git checkout oty-pvm-pba-demo
-cd packages/gm-core
-GM_SERVICE_LOG=5 GM_LOG=info mix test test/jam/pvm/blob_test.exs --only only
-```
-
-The output should print something like this:
-
-```pre
-...
-11:13:52.805 [info] LOG(JB Demo): Items: 118, balance: 10000, storage deposit: 9858, used: 98.58%
-11:13:52.809 [info] LOG(JB Demo): Items: 119, balance: 10000, storage deposit: 9940, used: 99.40%
-11:13:52.812 [info] LOG(JB Demo): Items: 120, balance: 10000, storage deposit: 10022, used: 100.22%
-11:13:52.814 [error] LOG(JB Demo): Writing to the storage failed: ERR_INSUFFICIENT_BALANCE
-```
-
-It demonstrates the threshold balance that a service needs to keep in order to write storage. You can play around with the code in `examples/02-pba-demo.c` to see how it works.
-
-If you want a watch-command template for [`entr`](https://formulae.brew.sh/formula/entr) (replace the path with your own):  
-`echo "/Users/vados/Documents/work/polkavm-examples/examples/output/02-pba-demo.pvm" | entr -cs 'GM_SERVICE_LOG=5 GM_LOG=info mix test test/jam/pvm/blob_test.exs --only only'`
+If you do not want to use Docker at all, you can also build the dependencies manually like described in [here](https://github.com/JamBrains/polkaports). You then still have to modify the [Justfile](services/Justfile) to use it directly.
