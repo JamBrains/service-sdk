@@ -11,7 +11,7 @@ echo "Converting examples to Base64 encoding..."
 for c_file in /opt/examples/*.c; do
     if [ -f "$c_file" ]; then
         filename=$(basename "$c_file")
-        echo -n "Processing $filename... "
+        echo -n "Reading $filename "
 
         printf "$filename#" >> "$output_file"
         # Encode the file with base64 and write to output (one line per file)

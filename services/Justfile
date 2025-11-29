@@ -4,7 +4,7 @@ set dotenv-path := "../.env"
 # Set CC flags
 export CC_FLAGS := "-Wl,--error-limit=0 -flto -Os -std=gnu23 -I/opt/sdk"
 export POLKATOOL_FLAGS := "--min-stack-size 131072 --dispatch-table '_jb_entry_refine,_jb_entry_accumulate'"
-export IMAGE := "ggwpez/service-builder"
+export IMAGE := "service-builder"
 
 default:
 	@echo "Build an example with 'just build [<name>]' or all examples with 'just build'"
@@ -18,7 +18,9 @@ build *name: output
 
 	# If name is empty, then we build all examples
 	if [ -z "{{name}}" ]; then
-		for n in *.c; do
+		# All files that do not start with 'bare*'
+		FILES=$(ls *.c | grep -v '^bare-')
+		for n in $FILES; do
 			name=$(basename $n .c)
 			just build $name
 		done
