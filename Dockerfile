@@ -1,7 +1,7 @@
 # Build stage - contains all build dependencies
 FROM debian:13-slim AS builder
 
-RUN apt-get update && apt-get install -y wget lsb-release gnupg build-essential curl git && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y wget lsb-release gnupg build-essential curl git librust-lazy-static-dev && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /opt
 RUN wget https://apt.llvm.org/llvm.sh && chmod u+x llvm.sh && ./llvm.sh 20

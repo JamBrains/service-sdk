@@ -15,11 +15,26 @@ if [ $# -lt 1 ]; then
     echo "Usage: single-file <input.c> [output-name] [additional polkavm-cc flags...]"
     echo "Example: single-file my-program.c"
     echo "Example: single-file my-program.c custom-output -O2"
+    echo "Example: single-file my-program.c --exclude-entry-c -O2"
     exit 1
 fi
 
 INPUT_FILE="$1"
 shift
+
+# Check for --exclude-entry-c flag
+EXCLUDE_ENTRY_C=false
+ARGS=()
+while [ $# -gt 0 ]; do
+    if [ "$1" = "--exclude-entry-c" ]; then
+        EXCLUDE_ENTRY_C=true
+        shift
+    else
+        ARGS+=("$1")
+        shift
+    fi
+done
+set -- "${ARGS[@]}"
 
 if [ ! -f "$INPUT_FILE" ]; then
     echo "Error: Input file '$INPUT_FILE' does not exist"
@@ -51,7 +66,11 @@ if [ -z "${POLKATOOL_FLAGS:-}" ]; then
 fi
 
 # Collect all SDK C files
-SDK_FILES=$(ls /opt/sdk/*.c | grep -v entry_authorizer.c)
+if [ "$EXCLUDE_ENTRY_C" = true ]; then
+    SDK_FILES=$(ls /opt/sdk/*.c | grep -v entry_authorizer.c | grep -v entry.c)
+else
+    SDK_FILES=$(ls /opt/sdk/*.c | grep -v entry_authorizer.c)
+fi
 
 # Create a temporary directory for our work
 TEMP_DIR=$(mktemp -d)

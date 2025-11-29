@@ -18,7 +18,9 @@ build *name: output
 
 	# If name is empty, then we build all examples
 	if [ -z "{{name}}" ]; then
-		for n in *.c; do
+		# All files that do not start with 'bare*'
+		FILES=$(ls *.c | grep -v '^bare-')
+		for n in $FILES; do
 			name=$(basename $n .c)
 			just build $name
 		done
