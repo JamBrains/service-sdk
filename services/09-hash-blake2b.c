@@ -773,7 +773,7 @@ static char hex_buff[1024];
 
 void jb_hook_accumulate(jb_accumulate_arguments_t*) {
     char const* data = "hello";
-    data_to_hex(data, strlen(data), hex_buff, 1024);
+    data_to_hex((const uint8_t*)data, strlen(data), hex_buff, 1024);
     
     printf("BLAKE2b 32 Byte hash example\nDATA: %s\n", hex_buff);
 
@@ -800,7 +800,7 @@ void jb_hook_accumulate(jb_accumulate_arguments_t*) {
         jb_assert_zero(error, "hashing must work");
     }
     size_t gas_after = jb_service_gas_remaining();
-    printf("Hashed %d times. Gas / hash %d\n", n, (gas_before - gas_after) / n);
+    printf("Hashed %d times. Gas / hash %zu\n", n, (gas_before - gas_after) / n);
 }
 
 void jb_hook_refine(jb_refine_arguments_t*) {

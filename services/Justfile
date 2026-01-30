@@ -4,7 +4,7 @@ set dotenv-path := "../.env"
 # Set CC flags
 export CC_FLAGS := "-Wl,--error-limit=0 -flto -Os -std=gnu23 -I/opt/sdk"
 export POLKATOOL_FLAGS := "--min-stack-size 131072 --dispatch-table '_jb_entry_refine,_jb_entry_accumulate'"
-export IMAGE := "ggwpez/service-builder"
+export IMAGE := env_var_or_default("IMAGE", "ggwpez/service-builder")
 
 default:
 	@echo "Build an example with 'just build [<name>]' or all examples with 'just build'"
@@ -59,6 +59,8 @@ link out_file *in_files:
 		{{POLKATOOL_FLAGS}} \
 		{{in_files}} \
 		-o {{out_file}}
+	@$DOCKER run --rm -v{{justfile_directory()}}:/app -v{{justfile_directory()}}/../sdk:/opt/sdk {{IMAGE}} polkavm-to-jam \
+		{{out_file}}
 	@echo "Linked {{out_file}}"
 
 clean:

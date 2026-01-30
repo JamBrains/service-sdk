@@ -21,3 +21,6 @@ docker:
 # Set podman as the preferred container runtime
 podman:
     echo "DOCKER=podman" > .env
+
+build-image:
+    podman build -m=24000m -t service-builder .

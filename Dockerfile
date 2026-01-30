@@ -29,11 +29,9 @@ RUN ./setup.sh
 # Set up environment for integrity checks
 ENV POLKAPORTS_SUFFIX="polkavm"
 ENV POLKAPORTS_SYSROOT="/opt/thirdparty/polkaports/sysroot-polkavm"
-ENV PATH="/opt/thirdparty/polkaports/sysroot-polkavm/bin:${PATH}"
+ENV PATH="/opt/thirdparty/polkaports/sysroot-polkavm/bin:/opt/bin:${PATH}"
 
-# Integrity checks in builder
-RUN polkavm-cc --help && polkavm-c++ --help && polkatool --help
-
+RUN cargo install --git https://github.com/JamBrains/polkavm-to-jam --root /opt/
 
 #################################
 # Stage 2
@@ -61,7 +59,7 @@ ENV STRIP=llvm-strip-20
 
 ENV POLKAPORTS_SUFFIX="polkavm"
 ENV POLKAPORTS_SYSROOT="/opt/thirdparty/polkaports/sysroot-polkavm"
-ENV PATH="/opt/thirdparty/polkaports/sysroot-polkavm/bin:${PATH}"
+ENV PATH="/opt/thirdparty/polkaports/sysroot-polkavm/bin:/opt/bin:${PATH}"
 
 # Integrity checks in builder
 RUN polkavm-cc --help && polkavm-c++ --help && polkatool --help

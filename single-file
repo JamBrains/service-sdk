@@ -87,4 +87,7 @@ polkavm-cc $CC_FLAGS "$@" "$TEMP_SOURCE" $SDK_FILES -o "$TEMP_ELF"
 # Step 2: Link with polkatool
 polkatool link $POLKATOOL_FLAGS "$TEMP_ELF" -o "$JAM_FILE"
 
+# Step 3: Convert to Jam format
+polkavm-to-jam "$JAM_FILE"
+
 echo "Successfully compiled and linked $INPUT_FILE to $JAM_FILE"
