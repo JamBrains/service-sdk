@@ -58,7 +58,7 @@ link out_file *in_files:
 		{{in_files}} \
 		-o {{out_file}}
 	@$DOCKER run --rm -v{{justfile_directory()}}:/app -v{{justfile_directory()}}/../sdk:/opt/sdk {{IMAGE}} polkavm-to-jam \
-		{{out_file}}
+		{{out_file}} -o {{out_file}}
 	@echo "Linked {{out_file}}"
 
 clean:
