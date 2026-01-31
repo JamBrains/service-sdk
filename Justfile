@@ -24,3 +24,7 @@ podman:
 
 build-image:
     podman build -m=24000m -t service-builder .
+
+build: env
+    just services build
+    just authorizers build

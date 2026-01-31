@@ -1,10 +1,7 @@
 set dotenv-load := true
 set dotenv-path := "../.env"
 
-# Set CC flags
-export CC_FLAGS := "-Wl,--error-limit=0 -flto -Os -std=gnu23 -I/opt/sdk"
-export POLKATOOL_FLAGS := "--min-stack-size 131072 --dispatch-table '_jb_entry_is_authorized'"
-export IMAGE := env_var_or_default("IMAGE", "ggwpez/service-builder")
+export IMAGE := env_var_or_default("IMAGE", "ghcr.io/jambrains/service-sdk:latest")
 
 default:
 	@echo "Build an authorizer with 'just build [<name>]' or all authorizers with 'just build'"
@@ -16,6 +13,11 @@ build *name: output
 	#!/usr/bin/env bash
 	set -e
 
+	if [ -z "$DOCKER" ]; then
+		echo "DOCKER environment variable is not set. Please run either 'just docker' or 'just podman' in the root folder first."
+		exit 1
+	fi
+
 	# If name is empty, then we build all authorizers
 	if [ -z "{{name}}" ]; then
 		for n in *.c; do
@@ -24,42 +26,15 @@ build *name: output
 		done
 	else
 		for n in {{name}}; do
-			just compile output/${n}.elf ${n}.c
-			just link output/${n}.jam output/${n}.elf
+			$DOCKER run --rm \
+				-v{{justfile_directory()}}:/app \
+				-w /app/output \
+				{{IMAGE}} single-file --authorizer /app/${n}.c ${n}
 		done
 	fi
 
 output:
 	@mkdir -p output
-
-compile out_file *in_files:
-	#!/usr/bin/env bash
-	set -e
-
-	if [ -z "$DOCKER" ]; then
-		echo "DOCKER environment variable is not set. Please run either 'just docker' or 'just podman' in the root folder first."
-		exit 1
-	fi
-
-	# List all files in /opt/sdk except entry.c (entry_authorizer.c is already included)
-	FILES=$(ls ../sdk/*.c | grep -v entry.c)
-	# Replace their relative path with an absolute path of /opt/sdk
-	FILES=$(echo $FILES | sed 's|../sdk/|/opt/sdk/|g')
-
-	$DOCKER run --rm -v{{justfile_directory()}}:/app -v{{justfile_directory()}}/../sdk:/opt/sdk {{IMAGE}} polkavm-cc \
-		{{CC_FLAGS}} \
-		{{in_files}} \
-		$FILES \
-		-o {{out_file}}
-
-link out_file *in_files:
-	@$DOCKER run --rm -v{{justfile_directory()}}:/app -v{{justfile_directory()}}/../sdk:/opt/sdk {{IMAGE}} polkatool link \
-		{{POLKATOOL_FLAGS}} \
-		{{in_files}} \
-		-o {{out_file}}
-	@$DOCKER run --rm -v{{justfile_directory()}}:/app -v{{justfile_directory()}}/../sdk:/opt/sdk {{IMAGE}} polkavm-to-jam \
-		{{out_file}} -o {{out_file}}
-	@echo "Linked {{out_file}}"
 
 clean:
 	rm -rf output/

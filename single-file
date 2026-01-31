@@ -11,37 +11,41 @@ set -euo pipefail
 # 4. Links the result with polkatool
 # 5. Produces a .jam output file
 
+# Parse all arguments, extracting flags and positional args
+EXCLUDE_ENTRY_C=false
+AUTHORIZER_MODE=false
+POSITIONAL=()
+while [ $# -gt 0 ]; do
+    if [ "$1" = "--exclude-entry-c" ]; then
+        EXCLUDE_ENTRY_C=true
+        shift
+    elif [ "$1" = "--authorizer" ]; then
+        AUTHORIZER_MODE=true
+        shift
+    else
+        POSITIONAL+=("$1")
+        shift
+    fi
+done
+set -- "${POSITIONAL[@]}"
+
 if [ $# -lt 1 ]; then
-    echo "Usage: single-file <input.c> [output-name] [additional polkavm-cc flags...]"
+    echo "Usage: single-file [--authorizer] <input.c> [output-name] [additional polkavm-cc flags...]"
     echo "Example: single-file my-program.c"
     echo "Example: single-file my-program.c custom-output -O2"
-    echo "Example: single-file my-program.c --exclude-entry-c -O2"
+    echo "Example: single-file --authorizer my-authorizer.c"
     exit 1
 fi
 
 INPUT_FILE="$1"
 shift
 
-# Check for --exclude-entry-c flag
-EXCLUDE_ENTRY_C=false
-ARGS=()
-while [ $# -gt 0 ]; do
-    if [ "$1" = "--exclude-entry-c" ]; then
-        EXCLUDE_ENTRY_C=true
-        shift
-    else
-        ARGS+=("$1")
-        shift
-    fi
-done
-set -- "${ARGS[@]}"
-
 if [ ! -f "$INPUT_FILE" ]; then
     echo "Error: Input file '$INPUT_FILE' does not exist"
     exit 1
 fi
 
-# Check if second argument is an output name or a compiler flag
+# Check if first remaining argument is an output name or a compiler flag
 OUTPUT_NAME=""
 if [ $# -gt 0 ] && [[ ! "$1" =~ ^- ]]; then
     OUTPUT_NAME="$1"
@@ -62,11 +66,19 @@ CC_FLAGS="${CC_FLAGS:--Wl,--error-limit=0 -flto -O0 -std=gnu23 -I/opt/sdk}"
 
 # Default polkatool flags (can be overridden by environment variable)
 if [ -z "${POLKATOOL_FLAGS:-}" ]; then
-    POLKATOOL_FLAGS="--min-stack-size 131072 --dispatch-table _jb_entry_accumulate,_jb_entry_accumulate,_jb_entry_accumulate,_jb_entry_accumulate"
+    if [ "$AUTHORIZER_MODE" = true ]; then
+        POLKATOOL_FLAGS="--min-stack-size 131072 --dispatch-table _jb_entry_is_authorized"
+    else
+        POLKATOOL_FLAGS="--min-stack-size 131072 --dispatch-table _jb_entry_accumulate,_jb_entry_accumulate,_jb_entry_accumulate,_jb_entry_accumulate"
+    fi
 fi
 
 # Collect all SDK C files
-if [ "$EXCLUDE_ENTRY_C" = true ]; then
+# For authorizers: exclude entry.c (use entry_authorizer.c)
+# For services: exclude entry_authorizer.c (use entry.c)
+if [ "$AUTHORIZER_MODE" = true ]; then
+    SDK_FILES=$(ls /opt/sdk/*.c | grep -v entry.c)
+elif [ "$EXCLUDE_ENTRY_C" = true ]; then
     SDK_FILES=$(ls /opt/sdk/*.c | grep -v entry_authorizer.c | grep -v entry.c)
 else
     SDK_FILES=$(ls /opt/sdk/*.c | grep -v entry_authorizer.c)
@@ -91,4 +103,4 @@ polkatool link $POLKATOOL_FLAGS "$TEMP_ELF" -o "$TEMP_POLKAVM"
 # Step 3: Convert to Jam format
 polkavm-to-jam "$TEMP_POLKAVM" -o "$JAM_FILE"
 
-echo "Successfully compiled and linked $INPUT_FILE to $JAM_FILE"
+echo "Service file written to $JAM_FILE"

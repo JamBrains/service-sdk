@@ -31,7 +31,7 @@ ENV POLKAPORTS_SUFFIX="polkavm"
 ENV POLKAPORTS_SYSROOT="/opt/thirdparty/polkaports/sysroot-polkavm"
 ENV PATH="/opt/thirdparty/polkaports/sysroot-polkavm/bin:/opt/bin:${PATH}"
 
-RUN cargo install --git https://github.com/JamBrains/polkavm-to-jam --root /opt/
+RUN cargo install --git https://github.com/JamBrains/polkavm-to-jam --quiet --locked --root /opt/
 
 #################################
 # Stage 2
