@@ -1,7 +1,8 @@
 *
 !thirdparty/polkaports/
+thirdparty/polkaports/sysroot*
+thirdparty/polkaports/target/
 !sdk/
 !single-file
 !generate-examples
-examples.txt
 !services/*.c

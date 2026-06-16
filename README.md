@@ -2,8 +2,9 @@
 
 ## Building the Service
 
-The easiest way to build the service is to use our provided Docker image (Apple silicon only). See
-the next section in case that you cannot use it.
+The easiest way to build the service is to use our provided Docker image, which is published for both
+`linux/amd64` and `linux/arm64` (Apple silicon). See the next section if you want to build the image
+yourself instead.
 
 The project uses [`just`](https://github.com/casey/just) to run commands. Install it with:
 
@@ -35,9 +36,9 @@ This will result in a **`02-pba-demo.jam`** file in the `services/output/` folde
 are currently *not* conformant to the Gray Paper since Polkatool is using a custom format. You can
 use the [Playground](https://playground.jamcha.in/) to download GP conformant service blobs.
 
-### Non-Apple Silicon
+### Building the Image Yourself
 
-You can build the Docker image also on Debian or other systems with `podman build -t service-builder.`
+You can build the Docker image yourself with `podman build -t service-builder .`
 (or `docker build -t service-builder .`) and then change the expected image name in
 `services/Justfile` to `service-builder`.
 
