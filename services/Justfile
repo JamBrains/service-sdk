@@ -2,6 +2,7 @@ set dotenv-load := true
 set dotenv-path := "../.env"
 
 export IMAGE := env_var_or_default("IMAGE", "ghcr.io/jambrains/service-sdk:latest")
+export GM_IMAGE := env_var_or_default("GM_IMAGE", "ghcr.io/jambrains/graymatter/gm:latest")
 
 default:
 	@echo "Build an example with 'just build [<name>]' or all examples with 'just build'"
@@ -30,6 +31,30 @@ build *name: output
 				-v{{justfile_directory()}}:/app \
 				-w /app/output \
 				{{IMAGE}} single-file /app/${n}.c ${n}
+		done
+	fi
+
+# Run a built example with GrayMatter (gm) by name, or all with 'just run'
+run *name:
+	#!/usr/bin/env bash
+	set -e
+
+	if [ -z "$DOCKER" ]; then
+		echo "DOCKER environment variable is not set. Please run either 'just docker' or 'just podman' in the root folder first."
+		exit 1
+	fi
+
+	# If name is empty, then we run all built examples
+	if [ -z "{{name}}" ]; then
+		for f in output/*.jam; do
+			just run $(basename "$f" .jam)
+		done
+	else
+		for n in {{name}}; do
+			$DOCKER run --rm \
+				-e GM_LOG=info -e GM_SERVICE_LOG=5 \
+				-v{{justfile_directory()}}:/jam \
+				{{GM_IMAGE}} run-service --service /jam/output/${n}.jam --accumulate
 		done
 	fi
 

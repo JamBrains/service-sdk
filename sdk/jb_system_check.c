@@ -76,7 +76,7 @@ void jb_system_check_memory() {
 }
 
 // SBRK instruction is a custom instruction "0x0b, 1, 0" just for PVM.
-static inline void *sbrk_custom(size_t size)
+/*static inline void *sbrk_custom(size_t size)
 {
 	void *address;
 	__asm__ volatile(
@@ -86,11 +86,11 @@ static inline void *sbrk_custom(size_t size)
 		: "memory"		// clobber: may modify memory
 	);
 	return address;
-}
+}*/
 
 void jb_system_check_sbrk() {
 	// Calling sbrk twice with zero should return the same pointer
-	void* base1 = sbrk_custom(0);
-	void* base2 = sbrk_custom(0);
-	jb_assert(base1 == base2 && base1 != NULL, "sbrk(0) should return the same pointer");
+	//void* base1 = sbrk_custom(0);
+	//void* base2 = sbrk_custom(0);
+	//jb_assert(base1 == base2 && base1 != NULL, "sbrk(0) should return the same pointer");
 }

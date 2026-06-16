@@ -62,7 +62,10 @@ ELF_FILE="${BASENAME}.elf"
 JAM_FILE="${BASENAME}.jam"
 
 # Default CC flags (can be overridden by environment variable)
-CC_FLAGS="${CC_FLAGS:--Wl,--error-limit=0 -flto -O0 -std=gnu23 -I/opt/sdk}"
+# --gc-sections collapses the overridden weak pvm_syscall import (musl's weak default,
+# replaced by the SDK's strong linux_syscall.c) so polkatool doesn't see its leftover,
+# index-less import marker. Required as long as polkavm.c keeps POLKAVM_IMPORT_WEAK.
+CC_FLAGS="${CC_FLAGS:--Wl,--error-limit=0 -Wl,--gc-sections -flto -O0 -std=gnu23 -I/opt/sdk}"
 
 # Default polkatool flags (can be overridden by environment variable)
 if [ -z "${POLKATOOL_FLAGS:-}" ]; then
